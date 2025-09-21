@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/AuthContext'
 import { userPreferencesService, savedRecipesService, cookingHistoryService } from '../../lib/supabaseService'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import BackButton from '@/components/BackButton'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function DashboardPage() {
@@ -67,11 +66,9 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-base-100 relative">
-        <BackButton fallbackUrl="/" />
-        
         <Navbar />
         
-        <div className="page-container">
+        <div className="page-container pt-24">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-primary mb-4">
               Welcome to your Dashboard

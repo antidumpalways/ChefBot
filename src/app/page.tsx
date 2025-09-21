@@ -196,18 +196,27 @@ export default function Page() {
         </section>
 
         {/* Community Recipes Section */}
-        <section className="w-full bg-gradient-to-br from-base-100 to-base-200">
+        <section className="w-full bg-gradient-to-br from-base-100 to-base-200"
+        style={{
+          background: currentTheme === "dark" ? "var(--dark-bg)" : undefined
+        }}>
           <div className="section-container">
             {/* Attractive Title */}
             <div className="text-center mb-8">
               <h2 className={`text-2xl md:text-3xl font-bold mb-3 ${
                 currentTheme === "dark" ? "text-white" : "text-primary"
-              }`}>
+              }`}
+              style={{
+                color: currentTheme === "dark" ? "var(--dark-text-primary)" : undefined
+              }}>
                 Explore Community Creations
               </h2>
               <p className={`text-base md:text-lg max-w-2xl mx-auto leading-relaxed ${
                 currentTheme === "dark" ? "text-gray-200" : "text-base-content/70"
-              }`}>
+              }`}
+              style={{
+                color: currentTheme === "dark" ? "var(--dark-text-secondary)" : undefined
+              }}>
                 Discover the best recipes shared by our community. From traditional dishes to modern innovations.
               </p>
             </div>
@@ -227,21 +236,33 @@ export default function Page() {
                   </div>
                   <div className={`p-4 ${
                     currentTheme === "dark" ? "bg-gray-800" : "bg-white"
-                  }`}>
+                  }`}
+                  style={{
+                    backgroundColor: currentTheme === "dark" ? "var(--dark-bg)" : undefined
+                  }}>
                     <h3 className={`font-semibold text-lg mb-2 line-clamp-2 ${
                       currentTheme === "dark" ? "text-white" : "text-gray-900"
-                    }`}>
+                    }`}
+                    style={{
+                      color: currentTheme === "dark" ? "var(--dark-text-primary)" : undefined
+                    }}>
                       {recipe.title || recipe.name || "Delicious Recipe"}
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className={`text-sm ${
                         currentTheme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}>
+                      }`}
+                      style={{
+                        color: currentTheme === "dark" ? "var(--dark-text-secondary)" : undefined
+                      }}>
                         {recipe.difficulty || "Medium"}
                       </span>
                       <span className={`text-sm ${
                         currentTheme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}>
+                      }`}
+                      style={{
+                        color: currentTheme === "dark" ? "var(--dark-text-secondary)" : undefined
+                      }}>
                         by {recipe.author_username || "Community"}
                       </span>
                     </div>

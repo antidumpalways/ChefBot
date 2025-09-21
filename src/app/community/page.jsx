@@ -53,7 +53,7 @@ export default function CommunityPage() {
           showResults ? "opacity-80 blur-sm" : "opacity-100"
         }`}
       >
-        <div className="page-container">
+        <div className="page-container pt-24">
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-4xl font-bold text-primary mb-2">

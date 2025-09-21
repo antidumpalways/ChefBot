@@ -19,6 +19,12 @@ html, body {
 :root {
   --container-max-width: 1280px;
   --container-padding: 1.5rem;
+  
+  /* Dark Theme Colors */
+  --dark-bg: #1A1A1A;
+  --dark-text-primary: #E0E0E0;
+  --dark-text-secondary: #A0A0A0;
+  --dark-accent: #FF8C00;
 }
 
 /* Main Container System */

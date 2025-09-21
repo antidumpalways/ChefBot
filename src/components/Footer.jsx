@@ -38,9 +38,13 @@ const Footer = () => {
   return (
     <footer className={`footer w-full py-16 ${
       currentTheme === "dark" 
-        ? "bg-gray-800/90 border-t border-gray-600 text-gray-100" 
-        : "bg-amber-50/90 border-t border-gray-200 text-gray-900"
-    }`}>
+        ? "text-gray-100" 
+        : "bg-amber-50 border-t border-gray-200 text-gray-900"
+    }`}
+    style={{
+      backgroundColor: currentTheme === "dark" ? "var(--dark-bg)" : undefined,
+      color: currentTheme === "dark" ? "var(--dark-text-primary)" : undefined
+    }}>
       <div className="w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="w-full">
           {/* Desktop Layout - 3 Columns */}
@@ -73,7 +77,10 @@ const Footer = () => {
               </div>
               <p className={`text-sm ${
                 currentTheme === "dark" ? "text-gray-400" : "text-gray-600"
-              }`}>
+              }`}
+              style={{
+                color: currentTheme === "dark" ? "var(--dark-text-secondary)" : undefined
+              }}>
                 Personalized recipes, powered by Sensay AI.
               </p>
             </div>
@@ -222,8 +229,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Divider */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-base-300 to-transparent mt-12"></div>
       </div>
     </footer>
   );

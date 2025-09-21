@@ -82,7 +82,7 @@ const [showNutrition, setShowNutrition] = useState(false);
         <BackButton />
         
         {/* Main Content Container - Centered */}
-        <div className="content-container flex flex-col items-center">
+        <div className="content-container flex flex-col items-center pt-24">
           {showRecipe && recipe ? (
             <AiRecipe
               recipe={recipe}
