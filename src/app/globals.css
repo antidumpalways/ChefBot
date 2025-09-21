@@ -1,0 +1,293 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --container-max-width: 1280px;
+  --container-padding: 1.5rem;
+}
+
+/* Consistent Container Classes */
+@layer components {
+  .container-main {
+    @apply container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-content {
+    @apply container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-wide {
+    @apply container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-narrow {
+    @apply container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* React Calendar Styling */
+.react-calendar {
+  @apply w-full bg-base-100 border border-base-300 rounded-lg shadow-sm;
+}
+
+.react-calendar__navigation {
+  @apply flex items-center justify-between p-4 border-b border-base-300;
+}
+
+.react-calendar__navigation button {
+  @apply p-2 rounded-md hover:bg-primary/80 text-base-content transition-colors;
+}
+
+.react-calendar__navigation button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.react-calendar__month-view__weekdays {
+  @apply grid grid-cols-7 gap-1 p-2;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  @apply text-center text-sm font-medium text-base-content/70 py-2;
+}
+
+.react-calendar__month-view__days {
+  @apply grid grid-cols-7 gap-1 p-2;
+}
+
+.react-calendar__tile {
+  @apply p-2 text-center rounded-md hover:bg-primary/80 text-base-content transition-colors cursor-pointer;
+}
+
+.react-calendar__tile--active {
+  @apply bg-primary text-primary-content;
+}
+
+.react-calendar__tile--now {
+  @apply bg-secondary text-secondary-content;
+}
+
+.react-calendar__tile:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-base-200;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-base-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-base-content/30;
+}
+
+/* Smooth transitions */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Focus styles */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-base-100;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Loading states */
+.loading-skeleton {
+  @apply animate-pulse bg-base-300 rounded;
+}
+
+/* Custom button styles */
+.btn-primary-custom {
+  @apply bg-primary text-primary-content hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+.btn-secondary-custom {
+  @apply bg-secondary text-secondary-content hover:bg-secondary/90 focus:ring-2 focus:ring-secondary focus:ring-offset-2;
+}
+
+/* Card styles */
+.card-custom {
+  @apply bg-base-100 border border-base-300 rounded-lg shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Form styles */
+.form-input-custom {
+  @apply w-full px-3 py-2 border border-base-300 rounded-md bg-base-100 text-base-content placeholder-base-content/50 focus:ring-2 focus:ring-primary focus:border-primary;
+}
+
+/* Responsive text */
+.text-responsive {
+  @apply text-sm sm:text-base md:text-lg;
+}
+
+.text-responsive-lg {
+  @apply text-lg sm:text-xl md:text-2xl;
+}
+
+.text-responsive-xl {
+  @apply text-xl sm:text-2xl md:text-3xl;
+}
+
+/* Grid layouts */
+.grid-responsive {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+}
+
+.grid-responsive-2 {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6;
+}
+
+.grid-responsive-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6;
+}
+
+/* Spacing utilities */
+.space-y-responsive {
+  @apply space-y-4 sm:space-y-6 lg:space-y-8;
+}
+
+.space-x-responsive {
+  @apply space-x-4 sm:space-x-6 lg:space-x-8;
+}
+
+/* Flex utilities */
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-between {
+  @apply flex items-center justify-between;
+}
+
+.flex-start {
+  @apply flex items-center justify-start;
+}
+
+.flex-end {
+  @apply flex items-center justify-end;
+}
+
+/* Page layouts */
+.page-container {
+  @apply min-h-screen bg-base-100;
+}
+
+.page-content {
+  @apply container-main py-8;
+}
+
+.page-header {
+  @apply text-center mb-8;
+}
+
+.page-title {
+  @apply text-responsive-xl font-bold text-base-content mb-4;
+}
+
+.page-subtitle {
+  @apply text-responsive text-base-content/70 max-w-2xl mx-auto;
+}
+
+/* Section layouts */
+.section-container {
+  @apply container-main py-12;
+}
+
+.section-header {
+  @apply text-center mb-8;
+}
+
+.section-title {
+  @apply text-responsive-lg font-bold text-base-content mb-4;
+}
+
+.section-subtitle {
+  @apply text-responsive text-base-content/70 max-w-2xl mx-auto;
+}
+
+/* Component specific */
+.navbar-container {
+  @apply container-main;
+}
+
+.footer-container {
+  @apply container-main;
+}
+
+.hero-container {
+  @apply container-content text-center;
+}
+
+.features-container {
+  @apply container-wide;
+}
+
+.content-container {
+  @apply container-content;
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .card-custom {
+    @apply border-base-content/20;
+  }
+  
+  .form-input-custom {
+    @apply border-base-content/20;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .card-custom {
+    @apply border-2 border-base-content;
+  }
+  
+  .btn-primary-custom {
+    @apply border-2 border-primary-content;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
