@@ -39,10 +39,10 @@ const Footer = () => {
     <footer className={`footer w-full py-16 ${
       currentTheme === "dark" 
         ? "text-gray-100" 
-        : "bg-amber-50 border-t border-gray-200 text-gray-900"
+        : "bg-white border-t border-gray-200 text-gray-900"
     }`}
     style={{
-      backgroundColor: currentTheme === "dark" ? "var(--dark-bg)" : undefined,
+      backgroundColor: currentTheme === "dark" ? "var(--dark-bg)" : "white",
       color: currentTheme === "dark" ? "var(--dark-text-primary)" : undefined
     }}>
       <div className="w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8">

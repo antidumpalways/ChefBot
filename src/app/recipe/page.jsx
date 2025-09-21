@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useSearchParams } from "next/navigation";
-import BackButton from "@/components/BackButton";
 import { PlusIcon } from "@/components/Icons";
 import { Clock, Users } from "lucide-react";
 import supabase from "@/lib/supabase"; 
@@ -21,11 +20,23 @@ export default function ViewRecipePage() {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
+        // First, try to get recipe from localStorage (for community recipes)
+        const storedRecipe = localStorage.getItem('current_recipe');
+        if (storedRecipe) {
+          const recipeData = JSON.parse(storedRecipe);
+          setRecipe(recipeData);
+          setLoading(false);
+          // Clean up localStorage after use
+          localStorage.removeItem('current_recipe');
+          return;
+        }
+
+        // If no localStorage data, try to get from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const recipeId = urlParams.get('id');
         
         if (!recipeId) {
-          setError('No recipe ID provided');
+          setError('No recipe data found');
           setLoading(false);
           return;
         }
@@ -56,32 +67,60 @@ export default function ViewRecipePage() {
           };
           setRecipe(recipeData);
         } else {
-          // Try to get from cooking_history
-          const { data: historyRecipe, error: historyError } = await supabase
-            .from('cooking_history')
+          // Try to get from community_recipes
+          const { data: communityRecipe, error: communityError } = await supabase
+            .from('community_recipes')
             .select('*')
-            .eq('recipe_id', recipeId)
+            .eq('id', recipeId)
             .single();
 
-          if (historyRecipe && !historyError) {
+          if (communityRecipe && !communityError) {
             const recipeData = {
-              id: historyRecipe.recipe_id,
-              title: historyRecipe.recipe_title,
-              name: historyRecipe.recipe_title,
-              description: '',
-              image: historyRecipe.recipe_image,
-              ingredients: historyRecipe.recipe_data?.ingredients || [],
-              instructions: historyRecipe.recipe_data?.instructions || [],
-              prepTime: historyRecipe.recipe_data?.prepTime || '',
-              servings: historyRecipe.recipe_data?.servings || '',
-              difficulty: historyRecipe.recipe_data?.difficulty || '',
-              cuisine: historyRecipe.recipe_data?.cuisine || '',
-              calories: historyRecipe.recipe_data?.calories || null,
-              type: 'Cooking History'
+              id: communityRecipe.id,
+              title: communityRecipe.title,
+              name: communityRecipe.title,
+              description: communityRecipe.description,
+              image: communityRecipe.image,
+              ingredients: communityRecipe.ingredients || [],
+              instructions: communityRecipe.instructions || [],
+              prepTime: communityRecipe.prep_time,
+              servings: communityRecipe.servings,
+              difficulty: communityRecipe.difficulty,
+              cuisine: communityRecipe.cuisine,
+              calories: communityRecipe.calories,
+              type: 'Community Recipe',
+              author_username: communityRecipe.author_username,
+              created_at: communityRecipe.created_at
             };
             setRecipe(recipeData);
           } else {
-            setError('Recipe not found');
+            // Try to get from cooking_history
+            const { data: historyRecipe, error: historyError } = await supabase
+              .from('cooking_history')
+              .select('*')
+              .eq('recipe_id', recipeId)
+              .single();
+
+            if (historyRecipe && !historyError) {
+              const recipeData = {
+                id: historyRecipe.recipe_id,
+                title: historyRecipe.recipe_title,
+                name: historyRecipe.recipe_title,
+                description: '',
+                image: historyRecipe.recipe_image,
+                ingredients: historyRecipe.recipe_data?.ingredients || [],
+                instructions: historyRecipe.recipe_data?.instructions || [],
+                prepTime: historyRecipe.recipe_data?.prepTime || '',
+                servings: historyRecipe.recipe_data?.servings || '',
+                difficulty: historyRecipe.recipe_data?.difficulty || '',
+                cuisine: historyRecipe.recipe_data?.cuisine || '',
+                calories: historyRecipe.recipe_data?.calories || null,
+                type: 'Cooking History'
+              };
+              setRecipe(recipeData);
+            } else {
+              setError('Recipe not found');
+            }
           }
         }
       } catch (err) {
@@ -109,7 +148,6 @@ export default function ViewRecipePage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">No Recipe Found</h1>
           <p className="text-base-content/60 mb-4">The recipe data could not be loaded.</p>
-          <BackButton />
         </div>
       </div>
     );
@@ -131,7 +169,6 @@ export default function ViewRecipePage() {
             showResults ? "opacity-80 blur-sm" : "opacity-100"
           }`}
         >
-          <BackButton />
           <div className="relative max-w-4xl w-full bg-base-200 shadow-xl rounded-xl">
             <div className="p-6 md:p-12">
               <header className="relative text-center mb-8">

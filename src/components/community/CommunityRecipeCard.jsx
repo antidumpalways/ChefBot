@@ -54,9 +54,8 @@ export default function CommunityRecipeCard({ recipe }) {
   };
 
   const handleViewRecipe = () => {
-    // Store recipe in localStorage for the recipe page to access
-    localStorage.setItem('current_recipe', JSON.stringify(recipe));
-    router.push('/recipe');
+    // Navigate to recipe page with recipe ID
+    router.push(`/recipe?id=${recipe.id}`);
   };
 
   return (

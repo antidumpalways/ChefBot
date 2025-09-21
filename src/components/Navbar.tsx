@@ -279,10 +279,10 @@ export default function Navbar({
           </div>
         ) : (
           /* Login/Signup Links - When not logged in */
-          <div className="flex items-center gap-1 md:gap-3">
+          <div className="flex items-center gap-1 md:gap-3 flex-wrap">
             <Link 
               href="/login" 
-              className={`btn btn-ghost btn-xs md:btn-sm text-xs md:text-sm ${
+              className={`btn btn-ghost btn-sm text-sm ${
                 currentTheme === "dark" 
                   ? "text-white hover:bg-white/10" 
                   : "text-gray-700 hover:bg-gray-100"
@@ -292,7 +292,7 @@ export default function Navbar({
             </Link>
             <Link 
               href="/login" 
-              className={`btn btn-primary btn-xs md:btn-sm text-xs md:text-sm ${
+              className={`btn btn-primary btn-sm text-sm ${
                 currentTheme === "dark" 
                   ? "bg-orange-500 hover:bg-orange-600 text-white" 
                   : "bg-orange-600 hover:bg-orange-700 text-white"

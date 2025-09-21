@@ -7,6 +7,16 @@ export default function SpoonCursor() {
   const [currentTheme, setCurrentTheme] = useState("light");
 
   useEffect(() => {
+    // Check if device is mobile/touch device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     ('ontouchstart' in window) || 
+                     (navigator.maxTouchPoints > 0);
+    
+    // Don't show custom cursor on mobile devices
+    if (isMobile) {
+      return;
+    }
+
     // Create cursor element
     const cursor = document.createElement('div');
     cursor.innerHTML = '🥄';

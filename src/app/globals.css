@@ -15,9 +15,11 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Hide default cursor when SpoonCursor is active */
-html, body, * {
-  cursor: none !important;
+/* Hide default cursor when SpoonCursor is active - Desktop only */
+@media (hover: hover) and (pointer: fine) {
+  html, body, * {
+    cursor: none !important;
+  }
 }
 
 /* Custom CSS Variables */
