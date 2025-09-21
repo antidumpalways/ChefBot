@@ -54,7 +54,7 @@ export default function CategoriesPage() {
         handleSearchFocus={handleSearchFocus}
         handleBlur={handleBlur}
       />
-      <div className={`flex flex-col items-center mt-20 p-5 md:p-10 w-full min-h-screen bg-base-100 transition-all duration-300 ${
+      <div className={`page-container flex flex-col items-center bg-base-100 transition-all duration-300 ${
         showResults ? "opacity-80 blur-sm" : "opacity-100"
       }`}>
         <h1 className="text-4xl md:text-6xl text-secondary mb-5 text-center">

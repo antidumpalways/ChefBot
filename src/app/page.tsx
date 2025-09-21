@@ -117,7 +117,7 @@ export default function Page() {
           !showResults ? "opacity-100" : "opacity-80 blur-sm"
         }`}
       >
-        <section className="w-full h-screen bg-transparent flex items-center justify-center">
+        <section className="w-full min-h-screen bg-transparent flex items-center justify-center pt-20">
           <div className="hero-container flex flex-col items-center space-y-8">
             {/* Headline Section */}
             <div className="flex flex-col items-center space-y-6">
@@ -128,7 +128,7 @@ export default function Page() {
               >
                 Every Recipe, Crafted <span className={`${
                   currentTheme === "dark" ? "text-orange-400" : "text-orange-600"
-                }`}>Just for You</span>
+                }`}>For You</span>
               </h1>
               
               <p
@@ -140,8 +140,8 @@ export default function Page() {
               </p>
               
               {/* Feature Benefits - Interactive Menu Buttons */}
-              <div className="features-container">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+              <div className="section-container">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Link href="/ai" className="flex items-center gap-4 p-6 rounded-lg bg-base-100/50 backdrop-blur-sm border border-base-300 hover:bg-base-200/70 hover:border-primary hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
                   <span className="text-3xl group-hover:scale-110 transition-transform duration-300">🤖</span>
                   <div className="space-y-1">
@@ -196,8 +196,8 @@ export default function Page() {
         </section>
 
         {/* Community Recipes Section */}
-        <section className="w-full py-16 p-5 md:p-1 bg-gradient-to-br from-base-100 to-base-200">
-          <div className="features-container">
+        <section className="w-full bg-gradient-to-br from-base-100 to-base-200">
+          <div className="section-container">
             {/* Attractive Title */}
             <div className="text-center mb-8">
               <h2 className={`text-2xl md:text-3xl font-bold mb-3 ${
@@ -213,7 +213,7 @@ export default function Page() {
             </div>
 
             {/* Community Recipes Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ml-16 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 justify-items-center">
               {communityRecipes.map((recipe, index) => (
                 <div key={recipe.id || index} className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 w-full max-w-sm">
                   <div className="relative h-48 overflow-hidden">

@@ -154,7 +154,7 @@ export default function DietPlannerPage() {
         handleBlur={handleBlur}
       />
 
-      <div className={`container mx-auto md:mt-16 mt-28 px-4 py-8 transition-all duration-300 ${
+      <div className={`page-container transition-all duration-300 ${
         showResults ? "opacity-80 blur-sm" : "opacity-100"
       }`}>
         <div className="text-center mb-8 mt-12 md:mt-0">

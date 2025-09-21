@@ -2,28 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 /* Custom CSS Variables */
 :root {
   --container-max-width: 1280px;
   --container-padding: 1.5rem;
 }
 
-/* Consistent Container Classes */
+/* Main Container System */
 @layer components {
-  .container-main {
-    @apply container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  /* Primary container for all pages */
+  .page-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-20;
   }
   
-  .container-content {
-    @apply container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8;
+  /* Content container for main content areas */
+  .content-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-12;
   }
   
-  .container-wide {
-    @apply container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+  /* Wide container for full-width layouts */
+  .wide-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl px-4 sm:px-6 lg:px-8 py-16;
   }
   
-  .container-narrow {
-    @apply container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8;
+  /* Narrow container for focused content */
+  .narrow-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl px-4 sm:px-6 lg:px-8 py-12;
+  }
+  
+  /* Hero container for landing sections */
+  .hero-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-24;
+  }
+  
+  /* Section container for content sections */
+  .section-container {
+    @apply w-full mx-auto max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl px-4 sm:px-6 lg:px-8 py-16;
   }
 }
 
@@ -192,14 +219,6 @@
 }
 
 /* Page layouts */
-.page-container {
-  @apply min-h-screen bg-base-100;
-}
-
-.page-content {
-  @apply container-main py-8;
-}
-
 .page-header {
   @apply text-center mb-8;
 }
@@ -210,11 +229,6 @@
 
 .page-subtitle {
   @apply text-responsive text-base-content/70 max-w-2xl mx-auto;
-}
-
-/* Section layouts */
-.section-container {
-  @apply container-main py-12;
 }
 
 .section-header {
@@ -229,25 +243,29 @@
   @apply text-responsive text-base-content/70 max-w-2xl mx-auto;
 }
 
-/* Component specific */
-.navbar-container {
-  @apply container-main;
+/* Component specific - Full Width */
+.navbar {
+  @apply w-full;
+}
+
+.footer {
+  @apply w-full;
 }
 
 .footer-container {
-  @apply container-main;
+  @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-20;
 }
 
 .hero-container {
-  @apply container-content text-center;
+  @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center;
 }
 
 .features-container {
-  @apply container-wide;
+  @apply w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl px-4 sm:px-6 lg:px-8 py-16;
 }
 
 .content-container {
-  @apply container-content;
+  @apply w-full mx-auto max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-12;
 }
 
 /* Dark mode specific adjustments */
@@ -264,8 +282,8 @@
 /* Print styles */
 @media print {
   .no-print {
-    display: none !important;
-  }
+  display: none !important;
+}
   
   .print-only {
     display: block !important;

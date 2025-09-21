@@ -36,17 +36,17 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className={`footer py-10 ${
+    <footer className={`footer w-full py-16 ${
       currentTheme === "dark" 
         ? "bg-gray-800/90 border-t border-gray-600 text-gray-100" 
         : "bg-amber-50/90 border-t border-gray-200 text-gray-900"
     }`}>
-      <div className="footer-container">
+      <div className="w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="w-full">
           {/* Desktop Layout - 3 Columns */}
-          <div className="hidden lg:flex lg:justify-center lg:items-center lg:gap-x-24">
+          <div className="hidden lg:flex lg:justify-between lg:items-center">
             {/* Left Section - Branding (Kiri) */}
-            <div className="text-left">
+            <div className="text-left w-1/3">
               <div className="flex items-center gap-1 mb-2">
                 {/* ChefB - DM Serif Display */}
                 <span className={`text-2xl font-dm-serif-display font-normal tracking-tight ${
@@ -79,8 +79,8 @@ const Footer = () => {
             </div>
 
             {/* Center Section - Links (Tengah) */}
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center justify-center space-y-3 w-1/3">
+              <div className="flex items-center gap-3">
                 <a
                   href="https://sensay.io"
                   target="_blank"
@@ -118,7 +118,7 @@ const Footer = () => {
             </div>
 
             {/* Right Section - Copyright (Kanan) */}
-            <div className="text-right">
+            <div className="text-right w-1/3">
               <p className={`text-sm ${
                 currentTheme === "dark" ? "text-gray-100" : "text-gray-900"
               }`}>
@@ -133,7 +133,7 @@ const Footer = () => {
           </div>
 
           {/* Mobile Layout - Stacked */}
-          <div className="lg:hidden flex flex-col items-center space-y-6">
+          <div className="lg:hidden flex flex-col items-center space-y-8">
             {/* Branding */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-2">
@@ -168,8 +168,8 @@ const Footer = () => {
         </div>
 
             {/* Links */}
-            <div className="flex flex-col items-center space-y-3">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center gap-3">
           <a
                   href="https://sensay.io"
             target="_blank"
@@ -208,18 +208,22 @@ const Footer = () => {
 
             {/* Copyright */}
             <div className="text-center">
-              <p className="text-sm text-neutral">
+              <p className={`text-sm ${
+                currentTheme === "dark" ? "text-gray-100" : "text-gray-900"
+              }`}>
                 &copy; {new Date().getFullYear()} ChefBot Pro
               </p>
-              <p className="text-xs text-neutral mt-1">
+              <p className={`text-xs mt-1 ${
+                currentTheme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}>
                 All Rights Reserved
-          </p>
-        </div>
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Bottom Divider */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-base-300 to-transparent mt-8"></div>
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-base-300 to-transparent mt-12"></div>
       </div>
     </footer>
   );

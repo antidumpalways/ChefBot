@@ -71,7 +71,7 @@ export default function DashboardPage() {
         
         <Navbar />
         
-        <div className="page-content md:mt-16 mt-28">
+        <div className="page-container">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-primary mb-4">
               Welcome to your Dashboard

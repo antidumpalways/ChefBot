@@ -77,7 +77,7 @@ export default function MyDietPlanPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-base-200 py-8">
-        <div className="container mx-auto px-4">
+        <div className="page-container">
           <div className="text-center">
             <div className="loading loading-spinner loading-lg text-primary mb-4"></div>
             <p className="text-lg">Loading your diet plans...</p>
@@ -91,7 +91,7 @@ export default function MyDietPlanPage() {
     <ProtectedRoute>
       <Navbar />
       <div className="min-h-screen bg-base-200 py-8">
-        <div className="container mx-auto px-4">
+        <div className="page-container">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-center mb-4">My Diet Plans</h1>
             <p className="text-center text-base-content/70 max-w-2xl mx-auto">

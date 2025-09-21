@@ -68,7 +68,7 @@ export default function Navbar({
           : "bg-transparent"
       }`}
     >
-      <div className="navbar-container flex flex-wrap items-center justify-between gap-y-2 py-2 md:py-3">
+      <div className="w-full mx-auto max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-y-2 py-2 md:py-3">
       {/* Left - Logo */}
       <div className="flex items-center">
         <Link
