@@ -1,6 +1,5 @@
 "use client";
 
-import BackButton from "@/components/BackButton";
 import { PlusIcon, YoutubeIcon } from "@/components/Icons";
 import { PlayIcon, PauseIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
@@ -479,7 +478,6 @@ function ShowMeal({ URL }) {
         showResults ? "opacity-80 blur-sm" : "opacity-100"
       }`}>
         <div className="container-content">
-          <BackButton />
           <div className="relative w-full bg-base-200 shadow-xl rounded-xl">
             <div className="p-6 md:p-12">
             <header className="relative text-center mb-8">

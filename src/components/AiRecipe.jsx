@@ -136,7 +136,6 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
             )}
             {recipe.prepTime && (
               <div className="bg-base-200 rounded-lg p-3 text-center">
-                <div className="text-2xl mb-1">🔪</div>
                 <div className="text-sm font-medium font-roboto-condensed">Prep</div>
                 <div className="text-xs text-base-content/70">{recipe.prepTime}</div>
               </div>

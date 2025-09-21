@@ -1,9 +1,9 @@
 import { Inter, Lora, DM_Serif_Display, Roboto_Condensed, Poppins } from "next/font/google";
 import "./globals.css";
 import ScrollToTop from "../components/ScrollToTop";
-import ChefKnifeCursor from "@/components/ChefKnifeCursor";
 import { AuthProvider } from "../contexts/AuthContext";
 import SessionManager from "../components/SessionManager";
+import SpoonCursor from "../components/SpoonCursor";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.variable} ${lora.variable} ${dmSerifDisplay.variable} ${robotoCondensed.variable} ${poppins.variable} font-roboto-condensed`}>
         <AuthProvider>
           <SessionManager />
-          <ChefKnifeCursor size="medium" color="auto" enableClick={true} />
+          <SpoonCursor />
           {children}
           <ScrollToTop></ScrollToTop>
         </AuthProvider>

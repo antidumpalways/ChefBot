@@ -15,6 +15,11 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Hide default cursor when SpoonCursor is active */
+html, body, * {
+  cursor: none !important;
+}
+
 /* Custom CSS Variables */
 :root {
   --container-max-width: 1280px;
@@ -25,6 +30,23 @@ html, body {
   --dark-text-primary: #E0E0E0;
   --dark-text-secondary: #A0A0A0;
   --dark-accent: #FF8C00;
+  
+  /* Custom Cursor - Light Theme */
+  --spoon-cursor-light: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="18" font-size="20" fill="black">🥄</text></svg>'), auto;
+  
+  /* Custom Cursor - Dark Theme */
+  --spoon-cursor-dark: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="18" font-size="20" fill="white">🥄</text></svg>'), auto;
+}
+
+/* Click Animation for buttons */
+a:active, button:active, [role="button"]:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Smooth transitions for interactive elements */
+a, button, input, select, textarea, [role="button"] {
+  transition: all 0.2s ease-in-out;
 }
 
 /* Main Container System */

@@ -190,6 +190,9 @@ export default function Navbar({
                       ? "hover:bg-gray-700 text-gray-100" 
                       : "hover:bg-gray-100 text-gray-800"
                   }`}
+                  style={{
+                    cursor: "var(--spoon-cursor)"
+                  }}
                 >
                   Profile/Dashboard
                 </Link>
@@ -204,6 +207,9 @@ export default function Navbar({
                       ? "hover:bg-gray-700 text-gray-100" 
                       : "hover:bg-gray-100 text-gray-800"
                   }`}
+                  style={{
+                    cursor: "var(--spoon-cursor)"
+                  }}
                 >
                   Saved Recipes
                 </Link>
@@ -218,6 +224,9 @@ export default function Navbar({
                       ? "hover:bg-gray-700 text-gray-100" 
                       : "hover:bg-gray-100 text-gray-800"
                   }`}
+                  style={{
+                    cursor: "var(--spoon-cursor)"
+                  }}
                 >
                   My Diet Plan
                 </Link>
@@ -237,6 +246,9 @@ export default function Navbar({
                       ? "hover:bg-gray-700 text-gray-100" 
                       : "hover:bg-gray-100 text-gray-800"
                   }`}
+                  style={{
+                    cursor: "var(--spoon-cursor)"
+                  }}
                 >
                   Cooking History
                 </Link>
@@ -256,6 +268,9 @@ export default function Navbar({
                       : "hover:bg-red-50 text-red-600"
                   }`}
                   onClick={signOut}
+                  style={{
+                    cursor: "var(--spoon-cursor)"
+                  }}
                 >
                   Logout
                 </button>

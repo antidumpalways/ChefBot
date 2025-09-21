@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export default function ChefKnifeCursor() {
   useEffect(() => {
     const cursor = document.createElement('div');
-    cursor.innerHTML = '🔪';
+    cursor.innerHTML = '🥄';
     cursor.style.position = 'fixed';
     cursor.style.pointerEvents = 'none';
     cursor.style.zIndex = '9999';
