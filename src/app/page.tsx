@@ -126,9 +126,9 @@ export default function Page() {
                   currentTheme === "dark" ? "text-white" : "text-primary"
                 }`}
               >
-                Every Recipe, Crafted <span className={`${
-                  currentTheme === "dark" ? "text-orange-400" : "text-orange-600"
-                }`}>For You</span>
+                Every Recipe, Crafted <span style={{
+                  color: "var(--accent)"
+                }}>For You</span>
               </h1>
               
               <p
@@ -275,11 +275,11 @@ export default function Page() {
             <div className="text-center">
               <Link
                 href="/community"
-                className={`btn btn-sm px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-md ${
-                  currentTheme === "dark" 
-                    ? "bg-primary text-primary-content hover:bg-primary/90" 
-                    : "bg-primary text-primary-content hover:bg-primary/90"
-                }`}
+                className="btn btn-sm px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-md text-white"
+                style={{
+                  backgroundColor: "var(--accent)",
+                  border: "none"
+                }}
               >
                 View Community Recipes
               </Link>

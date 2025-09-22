@@ -437,21 +437,37 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-xl p-6 rounded-lg shadow-xl bg-white dark:bg-base-200 space-y-4"
+      className="w-full max-w-xl p-6 rounded-lg shadow-xl border space-y-4"
+      style={{
+        backgroundColor: 'var(--bg-primary)',
+        borderColor: 'var(--text-secondary)'
+      }}
     >
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-bold text-primary font-dm-serif-display">AI Recipe Generator</h2>
-        <p className="text-sm text-neutral/70">Powered by Sensay AI</p>
+        <h2 className="text-3xl font-bold font-dm-serif-display"
+        style={{
+          color: 'var(--accent)'
+        }}>AI Recipe Generator</h2>
+        <p className="text-sm"
+        style={{
+          color: 'var(--text-secondary)'
+        }}>Powered by Sensay AI</p>
       </div>
 
       {/* Diet Planner Integration */}
       {dietMealInfo && (
-        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 mb-4 border border-primary/20">
+        <div className="rounded-lg p-4 mb-4 border" style={{backgroundColor: 'rgba(255, 140, 0, 0.1)', borderColor: 'var(--text-secondary)'}}>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">🥗</span>
-            <h3 className="font-semibold text-primary">From Your Diet Plan</h3>
+            <h3 className="font-semibold"
+            style={{
+              color: 'var(--accent)'
+            }}>From Your Diet Plan</h3>
           </div>
-          <div className="text-sm text-base-content/80">
+          <div className="text-sm"
+          style={{
+            color: 'var(--text-secondary)'
+          }}>
             <p><strong>Meal Type:</strong> {dietMealInfo.mealType}</p>
             {dietMealInfo.targetNutrition && (
               <div className="grid grid-cols-2 gap-2 mt-2">
@@ -526,7 +542,10 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
 
       {/* Quick Preset Buttons */}
       <div className="space-y-2">
-        <label className="text-sm font-medium font-roboto-condensed">Quick Presets:</label>
+        <label className="text-sm font-medium font-roboto-condensed"
+      style={{
+        color: 'var(--text-primary)'
+      }}>Quick Presets:</label>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -536,7 +555,12 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               setValue('spiceLevel', 'Medium');
               setValue('skillLevel', 'Beginner');
             }}
-            className="btn btn-outline btn-sm"
+            className="rounded-lg py-2 px-3 text-sm font-medium transition-colors border"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}
           >
             🍝 Italian Pasta
           </button>
@@ -548,7 +572,12 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               setValue('spiceLevel', 'Mild');
               setValue('skillLevel', 'Advanced');
             }}
-            className="btn btn-outline btn-sm"
+            className="rounded-lg py-2 px-3 text-sm font-medium transition-colors border"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}
           >
             🍣 Japanese Sushi
           </button>
@@ -560,7 +589,12 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               setValue('spiceLevel', 'Spicy');
               setValue('skillLevel', 'Intermediate');
             }}
-            className="btn btn-outline btn-sm"
+            className="rounded-lg py-2 px-3 text-sm font-medium transition-colors border"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}
           >
             🌶️ Mexican Spicy
           </button>
@@ -572,7 +606,12 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               setValue('spiceLevel', 'Mild');
               setValue('skillLevel', 'Beginner');
             }}
-            className="btn btn-outline btn-sm"
+            className="rounded-lg py-2 px-3 text-sm font-medium transition-colors border"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}
           >
             🥞 American Breakfast
           </button>
@@ -581,7 +620,11 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
 
       <button 
         type="submit" 
-        className="btn btn-primary w-full text-white"
+        className="w-full text-white rounded-lg py-3 px-4 font-medium transition-colors"
+        style={{
+          backgroundColor: 'var(--accent)',
+          border: 'none'
+        }}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -590,7 +633,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
             👨‍🍳 AI is cooking...
           </>
         ) : (
-          "👨‍🍳 Generate Recipe with AI"
+          "👨‍🍳 Generate Recipe with Sensay AI"
         )}
       </button>
       

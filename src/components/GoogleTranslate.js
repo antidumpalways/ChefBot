@@ -53,3 +53,4 @@ export const GoogleTranslate = {
 };
 
 export default GoogleTranslate;
+

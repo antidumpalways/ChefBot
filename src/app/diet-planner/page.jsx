@@ -165,7 +165,12 @@ export default function DietPlannerPage() {
             <span className="badge badge-info badge-sm">Real-time Generation</span>
           </div>
           <div className="mt-4">
-            <Link href="/ai" className="btn btn-outline btn-sm">
+            <Link href="/ai" className="rounded-lg py-2 px-4 text-sm font-medium transition-colors border"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}>
               🤖 Generate Custom Recipes
             </Link>
           </div>
@@ -408,7 +413,11 @@ export default function DietPlannerPage() {
 
                 <button
                   type="submit"
-                  className={`btn btn-primary w-full ${loading ? 'loading' : ''}`}
+                  className={`w-full text-white rounded-lg py-3 px-4 font-medium transition-colors ${loading ? 'loading' : ''}`}
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    border: 'none'
+                  }}
                   disabled={loading}
                 >
                   {loading
@@ -503,12 +512,21 @@ export default function DietPlannerPage() {
                       <button
                         onClick={handleSaveDietPlan}
                         disabled={saving}
-                        className={`btn btn-primary ${saving ? 'loading' : ''}`}
+                        className={`text-white rounded-lg py-2 px-4 font-medium transition-colors ${saving ? 'loading' : ''}`}
+                        style={{
+                          backgroundColor: 'var(--accent)',
+                          border: 'none'
+                        }}
                       >
                         {saving ? 'Saving...' : '💾 Save Weekly Diet Plan'}
                       </button>
                       <div>
-                        <a href="/my-diet-plan" className="btn btn-outline btn-sm">
+                        <a href="/my-diet-plan" className="rounded-lg py-2 px-4 text-sm font-medium transition-colors border"
+                        style={{
+                          backgroundColor: 'var(--bg-primary)',
+                          color: 'var(--text-primary)',
+                          borderColor: 'var(--text-secondary)'
+                        }}>
                           📋 View My Saved Plans
                         </a>
                       </div>

@@ -76,7 +76,7 @@ const [showNutrition, setShowNutrition] = useState(false);
         handleSearchFocus={handleSearchFocus}
         handleBlur={handleBlur}
       />
-      <div className={`min-h-screen py-10 bg-base-100 flex flex-col items-center justify-center mt-20 relative transition-all duration-300 ${
+      <div className={`min-h-screen py-10 theme-bg flex flex-col items-center justify-center mt-20 relative transition-all duration-300 ${
         showResults ? "opacity-80 blur-sm" : "opacity-100"
       }`}>
         <BackButton />
@@ -102,7 +102,12 @@ const [showNutrition, setShowNutrition] = useState(false);
             <div className="flex flex-wrap gap-2 mt-5 justify-center">
               {/* Only show Clear button when not showing recipe */}
               <button
-                className="btn btn-secondary btn-sm"
+                className="rounded-lg py-2 px-4 text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: 'var(--text-secondary)',
+                  color: 'var(--bg-primary)',
+                  border: 'none'
+                }}
                 onClick={handleReset}
               >
                 Clear
@@ -111,7 +116,12 @@ const [showNutrition, setShowNutrition] = useState(false);
               {/* Back to Diet Planner button */}
               <a
                 href="/diet-planner"
-                className="btn btn-outline btn-sm"
+                className="rounded-lg py-2 px-4 text-sm font-medium transition-colors border"
+                style={{
+                  backgroundColor: 'var(--bg-primary)',
+                  color: 'var(--text-primary)',
+                  borderColor: 'var(--text-secondary)'
+                }}
               >
                 🥗 Back to Diet Planner
               </a>
@@ -119,7 +129,12 @@ const [showNutrition, setShowNutrition] = useState(false);
               {/* Only show View Recipe button when recipe exists */}
               {recipe && (
                 <button
-                  className="btn btn-accent btn-sm"
+                  className="rounded-lg py-2 px-4 text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    color: 'white',
+                    border: 'none'
+                  }}
                   onClick={() => setShowRecipe(true)}
                 >
                   View Recipe
@@ -129,14 +144,25 @@ const [showNutrition, setShowNutrition] = useState(false);
           )}
 
           {/* --- Nutrition AI Section - Centered --- */}
-          <div id="nutrition-ai" className="w-full max-w-2xl mt-10 p-6 rounded-xl shadow-lg bg-base-200 border border-base-300">
-            <h2 className="text-2xl font-bold mb-4 text-brown-700 font-dm-serif-display text-center">🍎 Nutrition AI</h2>
+          <div id="nutrition-ai" className="w-full max-w-2xl mt-10 p-6 rounded-xl shadow-lg border" 
+          style={{
+            backgroundColor: 'var(--bg-primary)',
+            borderColor: 'var(--text-secondary)'
+          }}>
+            <h2 className="text-2xl font-bold mb-4 font-dm-serif-display text-center"
+            style={{
+              color: 'var(--accent)'
+            }}>🍎 Nutrition AI</h2>
 
             {!showNutrition ? (
               // ✅ Open Nutrition AI Button
               <div className="text-center">
                 <button
-                  className="btn btn-primary hover:bg-brown-700 text-white"
+                  className="text-white rounded-lg py-3 px-6 font-medium transition-colors hover:opacity-80"
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    border: 'none'
+                  }}
                   onClick={() => setShowNutrition(true)}
                 >
                   Open Nutrition AI
@@ -145,7 +171,13 @@ const [showNutrition, setShowNutrition] = useState(false);
             ) : (
               <>
                 <textarea
-                  className="w-full p-3 border border-base-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-brown-400"
+                  className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2"
+                  style={{
+                    backgroundColor: 'var(--bg-primary)',
+                    borderColor: 'var(--text-secondary)',
+                    color: 'var(--text-primary)',
+                    '--tw-ring-color': 'var(--accent)'
+                  }}
                   placeholder="Paste your recipe ingredients here..."
                   value={nutritionInput}
                   onChange={(e) => setNutritionInput(e.target.value)}
@@ -157,14 +189,22 @@ const [showNutrition, setShowNutrition] = useState(false);
                   <button
                     onClick={fetchNutrition}
                     disabled={loadingNutrition}
-                    className="btn btn-primary hover:bg-brown-700 text-white disabled:opacity-50"
+                    className="text-white rounded-lg py-2 px-4 font-medium transition-colors disabled:opacity-50"
+                    style={{
+                      backgroundColor: 'var(--accent)',
+                      border: 'none'
+                    }}
                   >
                     {loadingNutrition ? "Analyzing..." : "Get Nutrition Info"}
                   </button>
 
                   {/* ✅ Close Button */}
                   <button
-                    className="btn btn-primary hover:bg-brown-700 text-white"
+                    className="text-white rounded-lg py-2 px-4 font-medium transition-colors"
+                    style={{
+                      backgroundColor: 'var(--accent)',
+                      border: 'none'
+                    }}
                     onClick={() => {
                       setShowNutrition(false);
                       setNutrition(null);
@@ -176,16 +216,35 @@ const [showNutrition, setShowNutrition] = useState(false);
                 </div>
 
                 {nutrition && !nutrition.error && (
-                  <div className="mt-6 p-4 rounded-lg bg-base-100 border border-base-300 shadow">
-                    <h3 className="text-lg font-bold mb-2 text-brown-700 font-dm-serif-display text-center">
+                  <div className="mt-6 p-4 rounded-lg border shadow"
+                  style={{
+                    backgroundColor: 'var(--bg-primary)',
+                    borderColor: 'var(--text-secondary)'
+                  }}>
+                    <h3 className="text-lg font-bold mb-2 font-dm-serif-display text-center"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>
                       Nutrition Facts (per serving)
                     </h3>
-                    <table className="w-full border border-base-300 rounded-lg">
+                    <table className="w-full border rounded-lg"
+                    style={{
+                      borderColor: 'var(--text-secondary)'
+                    }}>
                       <tbody>
                         {Object.entries(nutrition).map(([key, value]) => (
-                          <tr key={key} className="border-t border-base-300">
-                            <td className="p-2 font-semibold capitalize">{key}</td>
-                            <td className="p-2">{value}</td>
+                          <tr key={key} className="border-t"
+                          style={{
+                            borderColor: 'var(--text-secondary)'
+                          }}>
+                            <td className="p-2 font-semibold capitalize"
+                            style={{
+                              color: 'var(--text-primary)'
+                            }}>{key}</td>
+                            <td className="p-2"
+                            style={{
+                              color: 'var(--text-secondary)'
+                            }}>{value}</td>
                           </tr>
                         ))}
                       </tbody>

@@ -60,18 +60,21 @@ const Footer = () => {
                 </span>
                 {/* Target Symbol - AI Precision */}
                 <div className="relative w-6 h-6 flex items-center justify-center">
-                  <div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                    currentTheme === "dark" ? "border-orange-400" : "border-orange-600"
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full ${
-                      currentTheme === "dark" ? "bg-orange-400" : "bg-orange-600"
-                    }`}></div>
+                  <div className="w-6 h-6 border-2 rounded-full flex items-center justify-center"
+                  style={{
+                    borderColor: "var(--accent)"
+                  }}>
+                    <div className="w-2 h-2 rounded-full"
+                    style={{
+                      backgroundColor: "var(--accent)"
+                    }}></div>
                   </div>
                 </div>
                 {/* t - DM Serif Display */}
-                <span className={`text-2xl font-dm-serif-display font-normal tracking-tight ${
-                  currentTheme === "dark" ? "text-orange-400" : "text-orange-600"
-                }`}>
+                <span className="text-2xl font-dm-serif-display font-normal tracking-tight"
+                style={{
+                  color: "var(--accent)"
+                }}>
                   t
                 </span>
               </div>
@@ -152,18 +155,21 @@ const Footer = () => {
                 </span>
                 {/* Target Symbol - AI Precision */}
                 <div className="relative w-6 h-6 flex items-center justify-center">
-                  <div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
-                    currentTheme === "dark" ? "border-orange-400" : "border-orange-600"
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full ${
-                      currentTheme === "dark" ? "bg-orange-400" : "bg-orange-600"
-                    }`}></div>
+                  <div className="w-6 h-6 border-2 rounded-full flex items-center justify-center"
+                  style={{
+                    borderColor: "var(--accent)"
+                  }}>
+                    <div className="w-2 h-2 rounded-full"
+                    style={{
+                      backgroundColor: "var(--accent)"
+                    }}></div>
                   </div>
                 </div>
                 {/* t - DM Serif Display */}
-                <span className={`text-2xl font-dm-serif-display font-normal tracking-tight ${
-                  currentTheme === "dark" ? "text-orange-400" : "text-orange-600"
-                }`}>
+                <span className="text-2xl font-dm-serif-display font-normal tracking-tight"
+                style={{
+                  color: "var(--accent)"
+                }}>
                   t
                 </span>
               </div>

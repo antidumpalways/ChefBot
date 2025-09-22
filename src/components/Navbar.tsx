@@ -92,26 +92,20 @@ export default function Navbar({
             </span>
             {/* Target Symbol - AI Precision */}
             <div className="relative w-6 h-6 md:w-8 md:h-8 flex items-center justify-center">
-              <div className={`w-6 h-6 md:w-8 md:h-8 border-2 rounded-full flex items-center justify-center ${
-                currentTheme === "dark" ? "border-orange-400" : "border-orange-600"
-              }`}
+              <div className="w-6 h-6 md:w-8 md:h-8 border-2 rounded-full flex items-center justify-center"
               style={{
-                borderColor: currentTheme === "dark" ? "var(--dark-accent)" : undefined
+                borderColor: "var(--accent)"
               }}>
-                <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
-                  currentTheme === "dark" ? "bg-orange-400" : "bg-orange-600"
-                }`}
+                <div className="w-2 h-2 md:w-3 md:h-3 rounded-full"
                 style={{
-                  backgroundColor: currentTheme === "dark" ? "var(--dark-accent)" : undefined
+                  backgroundColor: "var(--accent)"
                 }}></div>
               </div>
             </div>
             {/* t - DM Serif Display */}
-            <span className={`text-2xl md:text-3xl font-dm-serif-display font-normal tracking-tight ${
-              currentTheme === "dark" ? "text-orange-400" : "text-orange-600"
-            }`}
+            <span className="text-2xl md:text-3xl font-dm-serif-display font-normal tracking-tight"
             style={{
-              color: currentTheme === "dark" ? "var(--dark-accent)" : undefined
+              color: "var(--accent)"
             }}>
               t
             </span>
@@ -292,11 +286,11 @@ export default function Navbar({
             </Link>
             <Link 
               href="/login" 
-              className={`btn btn-primary btn-sm text-sm ${
-                currentTheme === "dark" 
-                  ? "bg-orange-500 hover:bg-orange-600 text-white" 
-                  : "bg-orange-600 hover:bg-orange-700 text-white"
-              }`}
+              className="btn btn-sm text-sm text-white"
+              style={{
+                backgroundColor: "var(--accent)",
+                border: "none"
+              }}
             >
               Sign Up
         </Link>

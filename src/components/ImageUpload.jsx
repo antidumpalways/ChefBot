@@ -90,7 +90,10 @@ function ImageUpload({ onIngredientsAnalyzed, analyzedIngredients = [] }) {
 
   return (
     <div className="w-full space-y-4">
-      <div className="text-sm font-medium text-gray-700 font-roboto-condensed">
+      <div className="text-sm font-medium font-roboto-condensed"
+      style={{
+        color: 'var(--text-primary)'
+      }}>
         Upload Image of Available Ingredients (Optional):
       </div>
 
@@ -106,13 +109,26 @@ function ImageUpload({ onIngredientsAnalyzed, analyzedIngredients = [] }) {
           />
           <label
             htmlFor="ingredient-image"
-            className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:opacity-80 transition-colors"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}
           >
-            <PhotoIcon className="w-8 h-8 text-gray-400 mb-2" />
-            <span className="text-sm text-gray-500">
+            <PhotoIcon className="w-8 h-8 mb-2"
+            style={{
+              color: 'var(--text-secondary)'
+            }} />
+            <span className="text-sm"
+            style={{
+              color: 'var(--text-secondary)'
+            }}>
               Click to upload ingredient image
             </span>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs"
+            style={{
+              color: 'var(--text-secondary)'
+            }}>
               PNG, JPG up to 5MB
             </span>
           </label>

@@ -27,10 +27,16 @@ html, body {
   --container-max-width: 1280px;
   --container-padding: 1.5rem;
   
+  /* Light Theme Colors */
+  --light-bg: #F8F8F8;
+  --light-text-primary: #282828;
+  --light-text-secondary: #888888;
+  --light-accent: #FF8C00;
+  
   /* Dark Theme Colors */
-  --dark-bg: #1A1A1A;
-  --dark-text-primary: #E0E0E0;
-  --dark-text-secondary: #A0A0A0;
+  --dark-bg: #121212;
+  --dark-text-primary: #F8F8F8;
+  --dark-text-secondary: #999999;
   --dark-accent: #FF8C00;
   
   /* Custom Cursor - Light Theme */
@@ -38,6 +44,50 @@ html, body {
   
   /* Custom Cursor - Dark Theme */
   --spoon-cursor-dark: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="18" font-size="20" fill="white">🥄</text></svg>'), auto;
+}
+
+/* Light Theme Styles */
+[data-theme="light"] {
+  --bg-primary: var(--light-bg);
+  --text-primary: var(--light-text-primary);
+  --text-secondary: var(--light-text-secondary);
+  --accent: var(--light-accent);
+}
+
+/* Dark Theme Styles */
+[data-theme="dark"] {
+  --bg-primary: var(--dark-bg);
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --accent: var(--dark-accent);
+}
+
+/* Global Theme Application */
+html, body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-aware components */
+.theme-bg {
+  background-color: var(--bg-primary);
+}
+
+.theme-text-primary {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-accent {
+  color: var(--accent);
+}
+
+.theme-border {
+  border-color: var(--text-secondary);
 }
 
 /* Click Animation for buttons */

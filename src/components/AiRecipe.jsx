@@ -86,7 +86,11 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
 
 
   return (
-    <div className="max-w-96 md:max-w-7xl w-full bg-base-100 text-base-content shadow-md rounded-lg overflow-hidden relative">
+    <div className="max-w-96 md:max-w-7xl w-full shadow-md rounded-lg overflow-hidden relative"
+    style={{
+      backgroundColor: 'var(--bg-primary)',
+      color: 'var(--text-primary)'
+    }}>
       <button
         className="absolute top-4 right-4 btn btn-sm btn-circle btn-ghost z-10"
         onClick={() => setShowRecipe(false)}
@@ -101,14 +105,20 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
             <span className="text-sm text-primary font-medium font-roboto-condensed">Sensay Generated Recipe</span>
             <span className="badge badge-success badge-sm">Sensay AI</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-primary mb-4 font-dm-serif-display">
-            {recipe.name} 🍲
-          </h1>
-          {recipe.description && (
-            <p className="text-base-content/80 max-w-2xl mx-auto mb-4">
-              {recipe.description}
-            </p>
-          )}
+        <h1 className="text-3xl md:text-5xl font-bold mb-4 font-dm-serif-display"
+        style={{
+          color: 'var(--accent)'
+        }}>
+          {recipe.name} 🍲
+        </h1>
+        {recipe.description && (
+          <p className="max-w-2xl mx-auto mb-4"
+          style={{
+            color: 'var(--text-secondary)'
+          }}>
+            {recipe.description}
+          </p>
+        )}
           <div className="flex items-center justify-center space-x-4 mb-6">
             {recipe.area && <span className="badge badge-primary">{recipe.area}</span>}
             {recipe.category && <span className="badge badge-success">{recipe.category}</span>}
@@ -119,32 +129,72 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
           {/* Recipe Info Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {recipe.difficulty && (
-              <div className="bg-base-200 rounded-lg p-3 text-center">
+              <div className="border rounded-lg p-3 text-center"
+              style={{
+                backgroundColor: 'var(--bg-primary)',
+                borderColor: 'var(--text-secondary)'
+              }}>
                 <div className="text-2xl mb-1">
                   {recipe.difficulty === 'Easy' ? '🟢' : recipe.difficulty === 'Medium' ? '🟡' : '🔴'}
                 </div>
-                <div className="text-sm font-medium font-roboto-condensed">Difficulty</div>
-                <div className="text-xs text-base-content/70">{recipe.difficulty}</div>
+                <div className="text-sm font-medium font-roboto-condensed"
+                style={{
+                  color: 'var(--text-primary)'
+                }}>Difficulty</div>
+                <div className="text-xs"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>{recipe.difficulty}</div>
               </div>
             )}
             {recipe.cookingTime && (
-              <div className="bg-base-200 rounded-lg p-3 text-center">
+              <div className="border rounded-lg p-3 text-center"
+              style={{
+                backgroundColor: 'var(--bg-primary)',
+                borderColor: 'var(--text-secondary)'
+              }}>
                 <div className="text-2xl mb-1">⏱️</div>
-                <div className="text-sm font-medium font-roboto-condensed">Cooking</div>
-                <div className="text-xs text-base-content/70">{recipe.cookingTime}</div>
+                <div className="text-sm font-medium font-roboto-condensed"
+                style={{
+                  color: 'var(--text-primary)'
+                }}>Cooking</div>
+                <div className="text-xs"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>{recipe.cookingTime}</div>
               </div>
             )}
             {recipe.prepTime && (
-              <div className="bg-base-200 rounded-lg p-3 text-center">
-                <div className="text-sm font-medium font-roboto-condensed">Prep</div>
-                <div className="text-xs text-base-content/70">{recipe.prepTime}</div>
+              <div className="border rounded-lg p-3 text-center"
+              style={{
+                backgroundColor: 'var(--bg-primary)',
+                borderColor: 'var(--text-secondary)'
+              }}>
+                <div className="text-sm font-medium font-roboto-condensed"
+                style={{
+                  color: 'var(--text-primary)'
+                }}>Prep</div>
+                <div className="text-xs"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>{recipe.prepTime}</div>
               </div>
             )}
             {recipe.servings && (
-              <div className="bg-base-200 rounded-lg p-3 text-center">
+              <div className="border rounded-lg p-3 text-center"
+              style={{
+                backgroundColor: 'var(--bg-primary)',
+                borderColor: 'var(--text-secondary)'
+              }}>
                 <div className="text-2xl mb-1">👥</div>
-                <div className="text-sm font-medium font-roboto-condensed">Servings</div>
-                <div className="text-xs text-base-content/70">{recipe.servings}</div>
+                <div className="text-sm font-medium font-roboto-condensed"
+                style={{
+                  color: 'var(--text-primary)'
+                }}>Servings</div>
+                <div className="text-xs"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>{recipe.servings}</div>
               </div>
             )}
           </div>
@@ -174,8 +224,15 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
             )}
 
             {/* Ingredients Section */}
-            <div className="bg-base-200 rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-4 flex items-center text-primary font-dm-serif-display">
+            <div className="border rounded-lg p-6"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}>
+              <h2 className="text-2xl font-semibold mb-4 flex items-center font-dm-serif-display"
+              style={{
+                color: 'var(--accent)'
+              }}>
                 <PlusIcon />
                 <span className="ml-2">Ingredients</span>
               </h2>
@@ -187,15 +244,26 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
                     const measure = ingredient.measure || ingredient.amount || "As needed";
                     
                     return (
-                      <div key={index} className="flex justify-between items-center py-2 border-b border-base-300 last:border-b-0">
-                        <span className="font-medium">{name}</span>
-                        <span className="text-primary">{measure}</span>
+                      <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0"
+                      style={{
+                        borderColor: 'var(--text-secondary)'
+                      }}>
+                        <span className="font-medium"
+                        style={{
+                          color: 'var(--text-primary)'
+                        }}>{name}</span>
+                        <span style={{
+                          color: 'var(--accent)'
+                        }}>{measure}</span>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <div className="text-base-content/60 text-center py-4">
+                <div className="text-center py-4"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>
                   No ingredients available.
                 </div>
               )}
@@ -204,9 +272,16 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
 
           {/* Instructions Section */}
           <div className="space-y-6">
-            <div className="bg-base-200 rounded-lg p-6">
+            <div className="border rounded-lg p-6"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold flex items-center text-primary font-dm-serif-display">
+                <h2 className="text-2xl font-semibold flex items-center font-dm-serif-display"
+                style={{
+                  color: 'var(--accent)'
+                }}>
                   <PlusIcon2 />
                   <span className="ml-2">Instructions</span>
                 </h2>
@@ -240,12 +315,18 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
                           checked={isExpanded || activeStep === index}
                           onChange={() => setActiveStep(activeStep === index ? -1 : index)}
                         />
-                        <div className="collapse-title text-lg font-medium flex items-center font-roboto-condensed">
+                        <div className="collapse-title text-lg font-medium flex items-center font-roboto-condensed"
+                        style={{
+                          color: 'var(--text-primary)'
+                        }}>
                           <span className="badge badge-primary mr-3">{index + 1}</span>
                           Step {index + 1}
                         </div>
                         <div className="collapse-content">
-                          <p className="text-base-content leading-relaxed">
+                          <p className="leading-relaxed"
+                          style={{
+                            color: 'var(--text-secondary)'
+                          }}>
                             {cleanedInstruction}
                           </p>
                         </div>
@@ -254,7 +335,10 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
                   }).filter(Boolean)}
                   
                   {/* Text to Speech for Instructions */}
-                  <div className="mt-6 pt-4 border-t border-base-300">
+                  <div className="mt-6 pt-4 border-t"
+                  style={{
+                    borderColor: 'var(--text-secondary)'
+                  }}>
                     <TextToSpeech 
                       sentences={instructions.map(inst => 
                         typeof inst === 'string' 
@@ -266,7 +350,10 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
                   </div>
                 </div>
               ) : (
-                <div className="text-base-content/60 text-center py-8">
+                <div className="text-center py-8"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}>
                   <div className="text-4xl mb-2">📝</div>
                   <p>No instructions available.</p>
                 </div>
@@ -279,39 +366,76 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           {/* Nutritional Info */}
           {recipe.nutritionalInfo && Object.keys(recipe.nutritionalInfo).length > 0 && (
-            <div className="bg-base-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 flex items-center text-primary font-dm-serif-display">
+            <div className="border rounded-lg p-6"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4 flex items-center font-dm-serif-display"
+              style={{
+                color: 'var(--accent)'
+              }}>
                 🥗 Nutritional Info (per serving)
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {recipe.nutritionalInfo.calories && (
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{recipe.nutritionalInfo.calories}</div>
-                    <div className="text-sm text-base-content/70">Calories</div>
+                    <div className="text-2xl font-bold"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>{recipe.nutritionalInfo.calories}</div>
+                    <div className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>Calories</div>
                   </div>
                 )}
                 {recipe.nutritionalInfo.protein && (
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{recipe.nutritionalInfo.protein}</div>
-                    <div className="text-sm text-base-content/70">Protein</div>
+                    <div className="text-2xl font-bold"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>{recipe.nutritionalInfo.protein}</div>
+                    <div className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>Protein</div>
                   </div>
                 )}
                 {recipe.nutritionalInfo.carbs && (
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{recipe.nutritionalInfo.carbs}</div>
-                    <div className="text-sm text-base-content/70">Carbs</div>
+                    <div className="text-2xl font-bold"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>{recipe.nutritionalInfo.carbs}</div>
+                    <div className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>Carbs</div>
                   </div>
                 )}
                 {recipe.nutritionalInfo.fat && (
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{recipe.nutritionalInfo.fat}</div>
-                    <div className="text-sm text-base-content/70">Fat</div>
+                    <div className="text-2xl font-bold"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>{recipe.nutritionalInfo.fat}</div>
+                    <div className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>Fat</div>
                   </div>
                 )}
                 {recipe.nutritionalInfo.fiber && (
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{recipe.nutritionalInfo.fiber}</div>
-                    <div className="text-sm text-base-content/70">Fiber</div>
+                    <div className="text-2xl font-bold"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>{recipe.nutritionalInfo.fiber}</div>
+                    <div className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>Fiber</div>
                   </div>
                 )}
               </div>
@@ -320,15 +444,28 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
 
           {/* Cooking Tips */}
           {recipe.cookingTips && recipe.cookingTips.length > 0 && (
-            <div className="bg-base-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 flex items-center text-primary font-dm-serif-display">
+            <div className="border rounded-lg p-6"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              borderColor: 'var(--text-secondary)'
+            }}>
+              <h3 className="text-xl font-semibold mb-4 flex items-center font-dm-serif-display"
+              style={{
+                color: 'var(--accent)'
+              }}>
                 💡 Cooking Tips
               </h3>
               <div className="space-y-3">
                 {recipe.cookingTips.map((tip, index) => (
                   <div key={index} className="flex items-start space-x-3">
-                    <div className="text-primary text-lg">💡</div>
-                    <p className="text-sm text-base-content/80">{tip}</p>
+                    <div className="text-lg"
+                    style={{
+                      color: 'var(--accent)'
+                    }}>💡</div>
+                    <p className="text-sm"
+                    style={{
+                      color: 'var(--text-secondary)'
+                    }}>{tip}</p>
                   </div>
                 ))}
               </div>
@@ -337,7 +474,10 @@ export default function AiRecipe({ recipe, setShowRecipe, recipeImageUrl }) {
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-8 pt-6 border-t border-base-300 flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-8 pt-6 border-t flex flex-col sm:flex-row gap-4 justify-center"
+        style={{
+          borderColor: 'var(--text-secondary)'
+        }}>
           <SaveRecipeButton 
             recipe={recipe}
             className="btn btn-primary"
