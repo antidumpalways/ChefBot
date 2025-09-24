@@ -443,6 +443,14 @@ We welcome contributions! Please follow these steps:
 
 This project is licensed under the ChefBot Pro License - see the [LICENSE](LICENSE) file for details.
 
+### License Summary:
+- **Personal Use**: Free for personal, educational, and non-commercial purposes
+- **Commercial Use**: Requires a commercial license (contact us for pricing)
+- **Attribution**: Credit required for all uses
+- **Protection**: Intellectual property protected with legal enforcement
+
+For commercial licensing inquiries, please contact the development team.
+
 ## 🙏 Acknowledgments
 
 - **[Sensay AI](https://sensay.io)** - AI recipe generation and chat capabilities
