@@ -1,12 +1,13 @@
 # 🍳 ChefBot Pro - AI Recipe & Diet Planning Platform
 
-A modern, AI-powered recipe and diet planning application that helps users discover, create, and share delicious recipes while maintaining healthy eating habits.
+A modern, AI-powered recipe and diet planning application with an intelligent chatbot assistant that helps users discover, create, and share delicious recipes while maintaining healthy eating habits through natural language conversations.
 
 ![ChefBot Pro](https://img.shields.io/badge/ChefBot-Pro-orange?style=for-the-badge&logo=chef-hat)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-Green?style=for-the-badge&logo=supabase)
+![AI Chatbot](https://img.shields.io/badge/AI-Chatbot-purple?style=for-the-badge&logo=robot)
 
 ## ✨ Features
 
@@ -21,6 +22,16 @@ A modern, AI-powered recipe and diet planning application that helps users disco
 - **Goal-Based Planning**: Customized for bulk, cut, maintain, or general health goals
 - **Interactive Calendar**: Visual meal scheduling with date selection
 - **Save & Manage**: Store multiple diet plans and track progress
+
+### 💬 Intelligent Chatbot Assistant
+- **AI-Powered Conversations**: Natural language interactions with Sensay AI
+- **Context-Aware Responses**: Understands current page and conversation history
+- **Smart Intent Detection**: Automatically detects when users want to use specific features
+- **Language-Aware CTAs**: Call-to-action text matches conversation language (English/Indonesian)
+- **Inline Action Buttons**: Contextual buttons appear within chat responses
+- **Multi-Language Support**: Automatic language detection and response
+- **Mobile-Optimized**: Responsive chat interface for all devices
+- **Feature Integration**: Direct access to all app features through chat
 
 ### 👥 Community Features
 - **Recipe Sharing**: Share your favorite recipes with the community
@@ -39,6 +50,7 @@ A modern, AI-powered recipe and diet planning application that helps users disco
 - **Dark/Light Theme**: Toggle between themes for comfortable viewing
 - **Smooth Animations**: Fluid transitions and hover effects
 - **Intuitive Interface**: User-friendly design with clear navigation
+- **Floating Chat Button**: Easy access to AI assistant from any page
 
 ## 🛠️ Tech Stack
 
@@ -163,22 +175,29 @@ ChefBot/
 │   │   ├── community/        # Community-specific components
 │   │   ├── AiRecipe.jsx      # AI recipe display
 │   │   ├── BackButton.tsx    # Navigation button
+│   │   ├── Chatbot.jsx       # AI chatbot assistant
+│   │   ├── ContextualActions.jsx # Contextual action buttons
 │   │   ├── Footer.jsx        # Site footer
 │   │   ├── GenerateRecipeForm.jsx # Recipe generation form
+│   │   ├── LanguageSelector.jsx # Language selection component
 │   │   ├── Navbar.tsx        # Navigation bar
 │   │   ├── ProtectedRoute.jsx # Route protection
 │   │   ├── SaveRecipeButton.jsx # Save recipe functionality
 │   │   ├── ShareRecipeButton.jsx # Share recipe functionality
 │   │   ├── ShowMeal.jsx      # Meal display component
+│   │   ├── SmartSuggestions.jsx # Smart suggestions component
 │   │   └── ThemeToggle.jsx   # Theme switcher
 │   ├── contexts/             # React contexts
 │   │   └── AuthContext.jsx   # Authentication context
 │   ├── hooks/                # Custom hooks
 │   │   └── useCookingHistory.js # Cooking history hook
 │   ├── lib/                  # Utility libraries
+│   │   ├── chatbot-integrations.js # Chatbot feature integrations
 │   │   ├── communityStorage.js # Community data storage
 │   │   ├── ingredientGraph.js # Ingredient relationships
+│   │   ├── language-support.js # Multi-language support
 │   │   ├── schemas.js        # Data validation schemas
+│   │   ├── sensay-config.js  # Sensay AI configuration
 │   │   ├── sensayUserHelper.js # Sensay user management
 │   │   ├── supabase.js       # Supabase client
 │   │   ├── supabaseService.js # Database services
@@ -209,7 +228,7 @@ ChefBot/
 - `GET /api/ingredient-similarity` - Find similar ingredients
 
 ### AI Chat
-- `POST /api/sensay-chat` - Sensay AI chat completions
+- `POST /api/sensay-chat` - Sensay AI chat completions with context awareness
 
 ### Request Examples
 
@@ -240,6 +259,22 @@ const response = await fetch('/api/generate-diet-plan', {
     activityLevel: 'moderate',
     goal: 'maintain',
     targetDate: '2025-10-01'
+  })
+});
+```
+
+**AI Chat with Context:**
+```javascript
+const response = await fetch('/api/sensay-chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    message: 'I want to create a recipe with chicken and rice',
+    userId: 'user123',
+    source: 'web',
+    skipHistory: false,
+    context: 'Current page: AI Recipe Generator (/ai)',
+    currentPage: '/ai'
   })
 });
 ```
@@ -276,6 +311,17 @@ Creates comprehensive 7-day meal plans with:
 - Variety in meals and ingredients
 - Interactive calendar interface
 - Save and manage multiple plans
+
+### Intelligent Chatbot Assistant
+Revolutionary AI-powered conversational interface featuring:
+- **Natural Language Processing**: Understands user intent and context
+- **Smart Intent Detection**: Automatically detects when users want to use specific features
+- **Context-Aware Responses**: Considers current page and conversation history
+- **Language Detection**: Automatically detects and responds in user's language (English/Indonesian)
+- **Inline Action Buttons**: Contextual buttons appear within chat responses for direct feature access
+- **Feature Integration**: Direct access to recipe generation, diet planning, community features, and more
+- **Mobile-Optimized**: Responsive design that works perfectly on all devices
+- **Conversation Memory**: Maintains context throughout the conversation
 
 ### Community Features
 - Share recipes with detailed information
@@ -416,15 +462,26 @@ If you have any questions or need help:
 
 ## 🗺️ Roadmap
 
+### ✅ Completed Features
+- [x] **AI-Powered Chatbot** - Intelligent conversational assistant with Sensay AI
+- [x] **Smart Intent Detection** - Automatic detection of user intent and actions
+- [x] **Language-Aware CTAs** - Context-aware call-to-action text in multiple languages
+- [x] **Inline Action Buttons** - Contextual buttons within chat responses
+- [x] **Multi-Language Support** - Automatic language detection (English/Indonesian)
+- [x] **Context-Aware Responses** - AI understands current page and conversation history
+- [x] **Mobile-Optimized Chat** - Responsive chat interface for all devices
+
 ### Upcoming Features
+- [ ] **Voice Commands** - Voice-controlled recipe search and chat
 - [ ] **Recipe Rating System** - Rate and review recipes
 - [ ] **Meal Prep Planning** - Batch cooking and meal prep
 - [ ] **Grocery List Generation** - Auto-generate shopping lists
 - [ ] **Nutrition Tracking** - Track daily nutrition intake
 - [ ] **Recipe Scaling** - Scale recipes for different serving sizes
 - [ ] **Offline Mode** - Access saved recipes offline
-- [ ] **Voice Commands** - Voice-controlled recipe search
 - [ ] **Recipe Video Integration** - Embed cooking videos
+- [ ] **Advanced AI Features** - More sophisticated AI interactions
+- [ ] **Chatbot Analytics** - Track usage and improve suggestions
 
 ### Performance Improvements
 - [ ] **Image Optimization** - Advanced image compression
