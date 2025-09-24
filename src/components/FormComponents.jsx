@@ -1,11 +1,9 @@
 "use client";
 
-import { MicrophoneIcon, StopIcon, X } from "@/components/Icons";
+import { MicrophoneIcon, X } from "@/components/Icons";
 import { useState , useEffect } from "react";
 
-const SpeechRecognition =
-  typeof window !== "undefined" &&
-  (window.SpeechRecognition || window.webkitSpeechRecognition);
+// Speech recognition feature is coming soon
 
 export function SelectField({ label, name, options, register }) {
   return (
@@ -57,11 +55,11 @@ export function CheckboxField({ label, name, options, register, descriptions = {
 }
 
 /**
- * The InputField component provides a text input field with speech recognition and clear functionality.
+ * The InputField component provides a text input field with clear functionality.
  *
  * - Displays a label and an input field.
- * - Allows users to input text manually or via speech recognition.
- * - Provides buttons to start speech recognition and clear the input field.
+ * - Allows users to input text manually.
+ * - Provides buttons for voice input (coming soon) and clear the input field.
  *
  * @param {string} label - The label for the input field.
  * @param {string} name - The name attribute for the input field.
@@ -69,7 +67,6 @@ export function CheckboxField({ label, name, options, register, descriptions = {
  */
 export function InputField({ label, name, register , watch }) {
   const [inputValue, setInputValue] = useState("");
-  const [isListening, setIsListening] = useState(false);
 
    const watchedValue = watch ? watch(name) : "";
   useEffect(() => {
@@ -85,35 +82,8 @@ export function InputField({ label, name, register , watch }) {
   };
 
   const startListening = () => {
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = "en-US";
-
-      recognition.onstart = () => {
-        setIsListening(true);
-      };
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInputValue(transcript);
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        setIsListening(false);
-      };
-
-      recognition.start();
-    } else {
-      alert("Speech recognition is not supported in your browser.");
-    }
+    // Voice input feature is coming soon
+    alert("🎤 Voice input feature is coming soon! Stay tuned for updates.");
   };
 
   return (
@@ -133,12 +103,15 @@ export function InputField({ label, name, register , watch }) {
         <button
           type="button"
           onClick={startListening}
-          className={`absolute top-1/2 right-12 transform -translate-y-1/2 btn btn-circle btn-sm ${
-            isListening ? "btn-secondary" : "btn-primary"
-          }`}
-          disabled={isListening}
+          className="absolute top-1/2 right-12 transform -translate-y-1/2 btn btn-circle btn-sm btn-outline"
+          style={{
+            borderColor: 'var(--accent)',
+            color: 'var(--accent)',
+            opacity: 0.7
+          }}
+          title="Voice input coming soon!"
         >
-          {isListening ? <StopIcon /> : <MicrophoneIcon />}
+          <MicrophoneIcon />
         </button>
 
         <button

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Mic, MicOff, Plus, X, Clock, Users, ChefHat, Sparkles } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Mic, Plus, X, Clock, Users, ChefHat, Sparkles } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import BackButton from "@/components/BackButton"
@@ -26,81 +26,22 @@ interface Recipe {
 export default function IngredientExplorer() {
   const [ingredients, setIngredients] = useState<string[]>([])
   const [inputValue, setInputValue] = useState("")
-  const [isListening, setIsListening] = useState(false)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [savedSets, setSavedSets] = useState<{ name: string; ingredients: string[] }[]>([])
   const [showSavedSets, setShowSavedSets] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [speechSupported, setSpeechSupported] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
-  const recognitionRef = useRef<any>(null)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleSearchFocus = () => setShowResults(true)
   const handleBlur = () => {
     setTimeout(() => setShowResults(false), 200)
   }
 
+  // Voice input feature is coming soon
   useEffect(() => {
-    try {
-      if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
-        const recognition = new (window as any).webkitSpeechRecognition()
-        recognition.continuous = false
-        recognition.interimResults = false
-        recognition.lang = "en-US"
-
-        recognition.onresult = (event: any) => {
-          try {
-            const transcript = event.results[0][0].transcript
-            const newIngredients = transcript
-              .split(/[,\s]+/)
-              .map((item: string) => item.trim())
-              .filter((item: string) => item.length > 0)
-
-            setIngredients((prev) => [...new Set([...prev, ...newIngredients])])
-            setIsListening(false)
-            setError(null)
-          } catch (err) {
-            console.error("Speech recognition result error:", err)
-            setError("Failed to process speech input")
-            setIsListening(false)
-          }
-        }
-
-        recognition.onerror = (event: any) => {
-          console.error("Speech recognition error:", event.error)
-          setError(`Speech recognition error: ${event.error}`)
-          setIsListening(false)
-        }
-
-        recognition.onend = () => {
-          setIsListening(false)
-        }
-
-        recognitionRef.current = recognition
-        setSpeechSupported(true)
-      } else {
-        setSpeechSupported(false)
-      }
-    } catch (err) {
-      console.error("Speech recognition initialization error:", err)
-      setSpeechSupported(false)
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop()
-        } catch (err) {
-          console.error("Error stopping speech recognition:", err)
-        }
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
+    console.log("Voice input feature is coming soon!");
   }, [])
 
   const addIngredient = () => {
@@ -116,33 +57,13 @@ export default function IngredientExplorer() {
   }
 
   const startListening = () => {
-    if (!speechSupported) {
-      setError("Speech recognition is not supported in your browser")
-      return
-    }
-
-    if (recognitionRef.current) {
-      try {
-        setIsListening(true)
-        setError(null)
-        recognitionRef.current.start()
-      } catch (err) {
-        console.error("Error starting speech recognition:", err)
-        setError("Failed to start speech recognition")
-        setIsListening(false)
-      }
-    }
+    // Voice input feature is coming soon
+    alert("🎤 Voice input feature is coming soon! Stay tuned for updates.");
   }
 
   const stopListening = () => {
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop()
-      } catch (err) {
-        console.error("Error stopping speech recognition:", err)
-      }
-    }
-    setIsListening(false)
+    // Voice input feature is coming soon
+    alert("🎤 Voice input feature is coming soon! Stay tuned for updates.");
   }
 
   const getRecipeImage = (recipeName: string, cuisine = "") => {
@@ -1471,16 +1392,14 @@ export default function IngredientExplorer() {
                   Add
                 </button>
               </div>
-              {speechSupported && (
-                <button
-                  onClick={isListening ? stopListening : startListening}
-                  disabled={!speechSupported}
-                  className={`btn ${isListening ? "btn-error" : "btn-info"} disabled:opacity-50`}
-                >
-                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  {isListening ? "Stop" : "Voice"}
-                </button>
-              )}
+              <button
+                onClick={startListening}
+                className="btn btn-outline btn-info opacity-70"
+                title="Voice input coming soon!"
+              >
+                <Mic className="w-4 h-4" />
+                Voice (Coming Soon)
+              </button>
             </div>
             <div className="flex flex-wrap gap-2 mb-4">
               {ingredients.map((ingredient, index) => (
@@ -1630,7 +1549,7 @@ export default function IngredientExplorer() {
             <div className="text-6xl mb-4">🥘</div>
             <h3 className="text-xl font-semibold text-base-content mb-2">Start by adding your ingredients</h3>
             <p className="text-base-content/70">
-              Type them in{speechSupported ? ", use voice input," : ""} or load a saved set to get started!
+              Type them in or load a saved set to get started!
             </p>
           </div>
         )}

@@ -196,7 +196,7 @@ function ShowMeal({ URL }) {
 
   const isFavorite = (idMeal) => favorites.some((f) => f.recipe_id === idMeal);
 
-  // --- Instruction TTS ---
+  // --- Instruction TTS - Coming Soon ---
   const [playerState, setPlayerState] = useState("idle");
   const [activeWordRange, setActiveWordRange] = useState({
     sentenceIndex: -1,
@@ -257,63 +257,20 @@ function ShowMeal({ URL }) {
     );
   }, [mealData]);
 
+  // TTS feature is coming soon
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    synth.cancel();
-
-    utterances.current = instructionSentences.map((text, sentenceIndex) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 1;
-
-      utterance.onboundary = (event) => {
-        if (event.name === "word") {
-          setActiveWordRange({
-            sentenceIndex,
-            startChar: event.charIndex,
-            endChar: event.charIndex + event.charLength,
-          });
-        }
-      };
-
-      utterance.onend = () => {
-        if (sentenceIndex === instructionSentences.length - 1) {
-          setPlayerState("idle");
-          setActiveWordRange({ sentenceIndex: -1, startChar: -1, endChar: -1 });
-        }
-      };
-      return utterance;
-    });
-
-    return () => synth.cancel();
+    // Text-to-speech feature is coming soon
+    console.log("Text-to-speech feature is coming soon!");
   }, [instructionSentences]);
 
   const handlePlay = useCallback(() => {
-    const synth = window.speechSynthesis;
-
-    // stop ingredients TTS if running
-    if (
-      ingredientPlayerState === "playing" ||
-      ingredientPlayerState === "paused"
-    ) {
-      synth.cancel();
-      setIngredientPlayerState("idle");
-      setActiveIngRange({ sentenceIndex: -1, startChar: -1, endChar: -1 });
-    }
-
-    if (playerState === "paused") {
-      synth.resume();
-    } else {
-      utterances.current.forEach((utterance) => synth.speak(utterance));
-    }
-    setPlayerState("playing");
+    // Text-to-speech feature is coming soon
+    alert("🔊 Text-to-speech feature is coming soon! Stay tuned for updates.");
   }, [playerState, ingredientPlayerState]);
 
   const handlePause = useCallback(() => {
-    if (playerState === "playing") {
-      window.speechSynthesis.pause();
-      setPlayerState("paused");
-    }
+    // Text-to-speech feature is coming soon
+    alert("🔊 Text-to-speech feature is coming soon! Stay tuned for updates.");
   }, [playerState]);
 
   // --- Fetch Random Meal ---
@@ -358,58 +315,20 @@ function ShowMeal({ URL }) {
  
   const ingredientUtterances = useRef([]);
 
+  // TTS feature is coming soon
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    synth.cancel();
-
-    ingredientUtterances.current = ingredientSentences.map((text, index) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 1;
-      utterance.onboundary = (event) => {
-        if (event.name == "word") {
-          setActiveIngRange({
-            sentenceIndex: index,
-            startChar: event.charIndex,
-            endChar: event.charIndex + event.charLength,
-          });
-        }
-      };
-      utterance.onend = () => {
-        if (index === ingredientSentences.length - 1) {
-          setIngredientPlayerState("idle");
-          setActiveIngRange({ sentenceIndex: -1, startChar: -1, endChar: -1 });
-        }
-      };
-      return utterance;
-    });
-
-    return () => synth.cancel();
+    // Text-to-speech feature is coming soon
+    console.log("Text-to-speech feature is coming soon!");
   }, [ingredientSentences]);
 
   const handleIngredientPlay = useCallback(() => {
-    const synth = window.speechSynthesis;
-
-    // stop steps TTS if running
-    if (playerState === "playing" || playerState === "paused") {
-      synth.cancel();
-      setPlayerState("idle");
-      setActiveWordRange({ sentenceIndex: -1, startChar: -1, endChar: -1 });
-    }
-
-    if (ingredientPlayerState === "paused") {
-      synth.resume();
-    } else {
-      ingredientUtterances.current.forEach((utt) => synth.speak(utt));
-    }
-    setIngredientPlayerState("playing");
+    // Text-to-speech feature is coming soon
+    alert("🔊 Text-to-speech feature is coming soon! Stay tuned for updates.");
   }, [ingredientPlayerState, playerState]);
 
   const handleIngredientPause = useCallback(() => {
-    if (ingredientPlayerState === "playing") {
-      window.speechSynthesis.pause();
-      setIngredientPlayerState("paused");
-    }
+    // Text-to-speech feature is coming soon
+    alert("🔊 Text-to-speech feature is coming soon! Stay tuned for updates.");
   }, [ingredientPlayerState]);
 
   const handleIngredientRestart = useCallback(() => {
