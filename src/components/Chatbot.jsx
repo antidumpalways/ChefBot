@@ -388,7 +388,8 @@ If intent is "action", also provide:
              setIsOpen(true);
              setIsMinimized(false);
            }}
-           className={`fixed ${isMobile ? 'bottom-4 right-4 w-12 h-12' : 'bottom-6 right-6 w-14 h-14'} bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg transition-all duration-300 z-50`}
+           className={`fixed ${isMobile ? 'bottom-4 right-4 w-12 h-12' : 'bottom-6 right-6 w-14 h-14'} text-white rounded-full shadow-lg transition-all duration-300 z-50`}
+           style={{ backgroundColor: 'var(--accent)' }}
          >
            💬
          </button>
@@ -398,7 +399,7 @@ If intent is "action", also provide:
        {isOpen && (
          <div className={`fixed ${isMobile ? 'bottom-20 right-2 left-2 w-auto' : 'bottom-24 right-6 w-80'} ${isMinimized ? 'h-16' : (isMobile ? 'h-80' : 'h-96')} bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 flex flex-col transition-all duration-300`}>
            {/* Header */}
-           <div className="bg-orange-500 text-white p-4 rounded-t-lg flex justify-between items-center">
+           <div className="text-white p-4 rounded-t-lg flex justify-between items-center" style={{ backgroundColor: 'var(--accent)' }}>
              <div>
                <h3 className="font-semibold">{languageManager.getTranslation('chatbotTitle')}</h3>
                <p className="text-sm opacity-90">{languageManager.getTranslation('chatbotSubtitle')}</p>
@@ -406,7 +407,10 @@ If intent is "action", also provide:
              <div className="flex items-center space-x-2">
                <button
                  onClick={() => setIsMinimized(!isMinimized)}
-                 className="w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 flex items-center justify-center transition-colors"
+                 className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                 style={{ backgroundColor: 'var(--accent)', opacity: 0.8 }}
+                 onMouseEnter={(e) => e.target.style.opacity = '1'}
+                 onMouseLeave={(e) => e.target.style.opacity = '0.8'}
                  title={isMinimized ? "Expand chat" : "Minimize chat"}
                >
                  {isMinimized ? '□' : '−'}
@@ -416,7 +420,10 @@ If intent is "action", also provide:
                    setIsOpen(false);
                    setIsMinimized(false);
                  }}
-                 className="w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 flex items-center justify-center transition-colors"
+                 className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                 style={{ backgroundColor: 'var(--accent)', opacity: 0.8 }}
+                 onMouseEnter={(e) => e.target.style.opacity = '1'}
+                 onMouseLeave={(e) => e.target.style.opacity = '0.8'}
                  title="Close chat"
                >
                  ✕
@@ -441,11 +448,12 @@ If intent is "action", also provide:
                  <div
                    className={`max-w-xs p-3 rounded-lg ${
                      message.sender === 'user'
-                       ? 'bg-orange-500 text-white'
+                       ? 'text-white'
                        : message.isError
                        ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                        : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                   }`}
+                     }`}
+                   style={message.sender === 'user' ? { backgroundColor: 'var(--accent)' } : {}}
                  >
                    {message.isTyping ? (
                      <div className="flex items-center space-x-1">
@@ -461,7 +469,7 @@ If intent is "action", also provide:
                        
                        {/* Inline Suggested Action Button */}
                        {message.suggestedAction && (
-                         <div className="mt-3 p-2 border-2 border-orange-500 rounded-lg bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-800/30 transition-colors">
+                         <div className="mt-3 p-2 border-2 rounded-lg transition-colors" style={{ borderColor: 'var(--accent)', backgroundColor: 'rgba(255, 140, 0, 0.1)' }}>
                            <button
                              onClick={async () => {
                                try {
@@ -486,7 +494,8 @@ If intent is "action", also provide:
                                  console.error('Error executing action:', error);
                                }
                              }}
-                             className="w-full text-left text-sm font-medium text-orange-700 dark:text-orange-300 hover:text-orange-800 dark:hover:text-orange-200 transition-colors"
+                             className="w-full text-left text-sm font-medium transition-colors"
+                             style={{ color: 'var(--accent)' }}
                            >
                              {message.suggestedAction.text}
                            </button>
@@ -519,11 +528,15 @@ If intent is "action", also provide:
                    onChange={(e) => setInputMessage(e.target.value)}
                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                    placeholder={languageManager.getTranslation('placeholder')}
-                   className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                   className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-700 dark:text-white"
+                   style={{ '--tw-ring-color': 'var(--accent)' }}
                  />
                  <button
                    onClick={() => handleSendMessage()}
-                   className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                   className="px-4 py-2 text-white rounded-lg transition-colors"
+                   style={{ backgroundColor: 'var(--accent)' }}
+                   onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                   onMouseLeave={(e) => e.target.style.opacity = '1'}
                  >
                    {languageManager.getTranslation('sendButton')}
                  </button>

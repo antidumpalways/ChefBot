@@ -126,9 +126,9 @@ export default function ContextualActions({ messages, onActionClick }) {
         {isAnalyzing ? (
           <div className="flex items-center justify-center p-4">
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-orange-500 rounded-full animate-bounce"></div>
-              <div className="w-4 h-4 bg-orange-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-              <div className="w-4 h-4 bg-orange-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-4 h-4 rounded-full animate-bounce" style={{backgroundColor: 'var(--accent)'}}></div>
+              <div className="w-4 h-4 rounded-full animate-bounce" style={{backgroundColor: 'var(--accent)', animationDelay: '0.1s'}}></div>
+              <div className="w-4 h-4 rounded-full animate-bounce" style={{backgroundColor: 'var(--accent)', animationDelay: '0.2s'}}></div>
             </div>
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">AI is analyzing...</span>
           </div>
@@ -137,7 +137,12 @@ export default function ContextualActions({ messages, onActionClick }) {
           <button
             key={index}
             onClick={() => handleActionClick(action)}
-            className="w-full text-left p-3 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 hover:from-orange-100 hover:to-orange-200 dark:hover:from-orange-800/30 dark:hover:to-orange-700/30 rounded-lg transition-all duration-200 border border-orange-200 dark:border-orange-700/50 group"
+            className="w-full text-left p-3 rounded-lg transition-all duration-200 group"
+            style={{ 
+              background: 'linear-gradient(to right, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.15))',
+              borderColor: 'rgba(255, 140, 0, 0.3)',
+              border: '1px solid'
+            }}
           >
             <div className="flex items-center space-x-3">
               <span className="text-2xl group-hover:scale-110 transition-transform">
@@ -152,7 +157,8 @@ export default function ContextualActions({ messages, onActionClick }) {
                 </p>
               </div>
               <svg 
-                className="w-4 h-4 text-orange-500 group-hover:translate-x-1 transition-transform" 
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                style={{ color: 'var(--accent)' }} 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"

@@ -26,11 +26,11 @@ const BackToTop = () => {
     <>
       {isVisible && (
         <div
-          className="fixed bottom-6 right-6 z-50 cursor-pointer"
+          className="fixed bottom-6 left-6 z-50 cursor-pointer"
           onClick={handleBackToTop}
         >
-          <div className="btn btn-primary btn-circle shadow-lg hover:scale-110 transition-transform duration-300">
-            <ArrowUpIcon className="w-5 h-5 text-primary-content" />
+          <div className="btn btn-circle shadow-lg hover:scale-110 transition-transform duration-300" style={{ backgroundColor: 'var(--accent)' }}>
+            <ArrowUpIcon className="w-5 h-5 text-white" />
           </div>
         </div>
       )}

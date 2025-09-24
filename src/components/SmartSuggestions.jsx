@@ -67,7 +67,7 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
   return (
     <div className="p-4 border-t border-gray-200 dark:border-gray-700">
       <div className="mb-3">
-        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
           {languageManager.getTranslation('smartSuggestions')}
         </h4>
         {context?.feature && (
@@ -82,7 +82,7 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
           <button
             key={index}
             onClick={() => onSuggestionClick(suggestion)}
-            className="w-full text-left p-2 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600"
+            className="w-full text-left p-2 text-sm bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200"
           >
             {suggestion}
           </button>
@@ -90,7 +90,7 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
       </div>
       
       <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+        <p className="text-xs text-gray-600 dark:text-gray-300 text-center">
           {languageManager.getTranslation('clickToStart')}
         </p>
       </div>
