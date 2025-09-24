@@ -4,6 +4,7 @@ import ScrollToTop from "../components/ScrollToTop";
 import { AuthProvider } from "../contexts/AuthContext";
 import SessionManager from "../components/SessionManager";
 import SpoonCursor from "../components/SpoonCursor";
+import Chatbot from "../components/Chatbot";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
           <SpoonCursor />
           {children}
           <ScrollToTop></ScrollToTop>
+          <Chatbot />
         </AuthProvider>
       </body>
     </html>

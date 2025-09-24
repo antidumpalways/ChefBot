@@ -36,6 +36,52 @@ const [showNutrition, setShowNutrition] = useState(false);
     }
   }, []);
 
+  // Handle chatbot parameters
+  useEffect(() => {
+    const chatbotParams = localStorage.getItem('chatbot-recipe-params');
+    const nutritionContext = localStorage.getItem('chatbot-nutrition-context');
+    
+    if (chatbotParams) {
+      try {
+        const params = JSON.parse(chatbotParams);
+        console.log('🤖 Chatbot recipe parameters received:', params);
+        
+        // Clear the parameters after reading
+        localStorage.removeItem('chatbot-recipe-params');
+        
+        // You can use these parameters to pre-fill the form
+        if (params.source === 'chatbot' || params.source === 'chatbot-suggestion' || params.source === 'chatbot-message') {
+          console.log('📝 Pre-filling form with chatbot data:', {
+            ingredients: params.ingredients,
+            cuisine: params.cuisine,
+            diet: params.diet,
+            mealType: params.mealType
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing chatbot parameters:', error);
+      }
+    }
+
+    if (nutritionContext) {
+      try {
+        const context = JSON.parse(nutritionContext);
+        console.log('🍎 Chatbot nutrition context received:', context);
+        
+        // Clear the context after reading
+        localStorage.removeItem('chatbot-nutrition-context');
+        
+        // Pre-fill nutrition input
+        if (context.source === 'chatbot' && context.food) {
+          setNutritionInput(context.food);
+          console.log('📊 Pre-filling nutrition input with:', context.food);
+        }
+      } catch (error) {
+        console.error('Error parsing nutrition context:', error);
+      }
+    }
+  }, []);
+
   const handleReset = () => {
     setRecipe(null);
     setShowRecipe(false);

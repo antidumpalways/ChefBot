@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sensayService } from '../../../services/sensay-service';
 import { getSensayConfig } from '../../../config/sensay';
+import { chatbotIntegrations } from '../../../lib/chatbot-integrations';
 
 // Interface untuk request body
 interface ChatRequest {
@@ -8,6 +9,8 @@ interface ChatRequest {
   userId?: string;
   source?: 'web' | 'embed' | 'discord' | 'telegram';
   skipHistory?: boolean;
+  context?: string;
+  currentPage?: string;
 }
 
 // Interface untuk response
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: ChatRequest = await request.json();
-    const { message, userId, source = 'web', skipHistory = false } = body;
+    const { message, userId, source = 'web', skipHistory = false, context, currentPage } = body;
 
     // Validasi input
     if (!message || message.trim().length === 0) {
@@ -79,9 +82,15 @@ export async function POST(request: NextRequest) {
       // Lanjutkan meskipun inisialisasi gagal, mungkin sudah ada
     }
 
+    // Enhanced message with context
+    let enhancedMessage = message;
+    if (context) {
+      enhancedMessage = `${context}\n\nUser message: ${message}`;
+    }
+
     // Kirim pesan ke ChefBot Pro
     const response = await sensayService.getChatResponse(
-      message,
+      enhancedMessage,
       finalUserId,
       source,
       skipHistory
@@ -140,3 +149,4 @@ export async function GET(request: NextRequest) {
     }, { status: 500 });
   }
 }
+
