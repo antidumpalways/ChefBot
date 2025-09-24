@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { chatbotIntegrations } from '../lib/chatbot-integrations';
-import { languageManager } from '../lib/language-support';
 
 export default function SmartSuggestions({ onSuggestionClick, isVisible = true }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -19,39 +18,40 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
   }, []);
 
   const getLocalizedSuggestions = () => {
+    // Force English suggestions regardless of browser language
     if (!context?.featureKey) {
       return [
-        languageManager.getTranslation('generateRecipe'),
-        languageManager.getTranslation('planMeals'),
-        languageManager.getTranslation('browseRecipes'),
-        languageManager.getTranslation('exploreIngredients')
+        "🍳 Generate a custom recipe with AI",
+        "📊 Plan your weekly meals",
+        "👥 Browse community recipes",
+        "🔍 Explore ingredients and substitutions"
       ];
     }
 
     const featureSuggestions = {
       'recipe-generator': [
-        languageManager.getTranslation('recipeGenerator.generatePasta'),
-        languageManager.getTranslation('recipeGenerator.createSalad'),
-        languageManager.getTranslation('recipeGenerator.makeDessert'),
-        languageManager.getTranslation('recipeGenerator.suggestMexican')
+        "🍝 Generate a pasta recipe",
+        "🥗 Create a healthy salad",
+        "🍰 Make a dessert recipe",
+        "🌮 Suggest Mexican dishes"
       ],
       'diet-planner': [
-        languageManager.getTranslation('dietPlanner.planWeek'),
-        languageManager.getTranslation('dietPlanner.calculateCalories'),
-        languageManager.getTranslation('dietPlanner.suggestLunch'),
-        languageManager.getTranslation('dietPlanner.createMealPlan')
+        "📅 Plan this week's meals",
+        "⚖️ Calculate my daily calories",
+        "🥗 Suggest healthy lunch options",
+        "🍎 Create a balanced meal plan"
       ],
       'community': [
-        languageManager.getTranslation('community.showTrending'),
-        languageManager.getTranslation('community.findRated'),
-        languageManager.getTranslation('community.helpUpload'),
-        languageManager.getTranslation('community.searchCuisines')
+        "👀 Show me trending recipes",
+        "⭐ Find highly rated dishes",
+        "📤 Help me upload my recipe",
+        "🔍 Search for specific cuisines"
       ],
       'ingredient-explorer': [
-        languageManager.getTranslation('ingredientExplorer.findSubstitutes'),
-        languageManager.getTranslation('ingredientExplorer.exploreVegetables'),
-        languageManager.getTranslation('ingredientExplorer.checkSpices'),
-        languageManager.getTranslation('ingredientExplorer.findDairyAlternatives')
+        "🔄 Find ingredient substitutes",
+        "🥕 Explore vegetable options",
+        "🧄 Check spice compatibility",
+        "🥛 Find dairy alternatives"
       ]
     };
 
@@ -68,11 +68,11 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
     <div className="p-4 border-t border-gray-200 dark:border-gray-700">
       <div className="mb-3">
         <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-          {languageManager.getTranslation('smartSuggestions')}
+          💡 Smart Suggestions
         </h4>
         {context?.feature && (
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {languageManager.getTranslation('basedOn')} {context.feature.name}
+            Based on {context.feature.name}
           </p>
         )}
       </div>
@@ -91,7 +91,7 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
       
       <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
         <p className="text-xs text-gray-600 dark:text-gray-300 text-center">
-          {languageManager.getTranslation('clickToStart')}
+          Click any suggestion to get started! 🚀
         </p>
       </div>
     </div>
