@@ -21,7 +21,7 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
     // Force English suggestions regardless of browser language
     if (!context?.featureKey) {
       return [
-        "🍳 Generate a custom recipe with AI",
+        "🍳 Generate a random recipe with Sensay AI",
         "📊 Plan your weekly meals",
         "👥 Browse community recipes",
         "🔍 Explore ingredients and substitutions"

@@ -53,7 +53,7 @@ export class ChatbotIntegrations {
   generateSmartSuggestions(context) {
     if (!context.feature) {
       return [
-        "🍳 Generate a custom recipe with AI",
+        "🍳 Generate a random recipe with Sensay AI",
         "📊 Plan your weekly meals",
         "👥 Browse community recipes",
         "🔍 Explore ingredients and substitutions"
