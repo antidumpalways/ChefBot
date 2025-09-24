@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { chatbotIntegrations } from '../lib/chatbot-integrations';
-import { languageManager } from '../lib/language-support';
 import SmartSuggestions from './SmartSuggestions';
 import ContextualActions from './ContextualActions';
 
@@ -29,7 +28,7 @@ export default function Chatbot() {
     if (typeof window !== 'undefined') {
       const context = chatbotIntegrations.getCurrentPageContext();
       setCurrentContext(context);
-      setCurrentLanguage(languageManager.getCurrentLanguage());
+      setCurrentLanguage('en');
       
       // Check if mobile
       const checkMobile = () => {
@@ -401,8 +400,8 @@ If intent is "action", also provide:
            {/* Header */}
            <div className="text-white p-4 rounded-t-lg flex justify-between items-center" style={{ backgroundColor: 'var(--accent)' }}>
              <div>
-               <h3 className="font-semibold">{languageManager.getTranslation('chatbotTitle')}</h3>
-               <p className="text-sm opacity-90">{languageManager.getTranslation('chatbotSubtitle')}</p>
+               <h3 className="font-semibold">🤖 ChefBot Assistant</h3>
+               <p className="text-sm opacity-90">Ask me anything about cooking!</p>
              </div>
              <div className="flex items-center space-x-2">
                <button
@@ -436,8 +435,8 @@ If intent is "action", also provide:
              <div className="flex-1 overflow-y-auto p-4 space-y-3">
                {messages.length === 0 && (
                  <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                   <p>{languageManager.getTranslation('welcomeTitle')}</p>
-                   <p className="text-sm mt-2">{languageManager.getTranslation('welcomeSubtitle')}</p>
+                   <p>👋 Hi! I'm your cooking assistant.</p>
+                   <p className="text-sm mt-2">Ask me anything about recipes, ingredients, or cooking tips!</p>
                  </div>
                )}
                {messages.map((message) => (
@@ -527,7 +526,7 @@ If intent is "action", also provide:
                    value={inputMessage}
                    onChange={(e) => setInputMessage(e.target.value)}
                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                   placeholder={languageManager.getTranslation('placeholder')}
+                   placeholder="Ask me anything..."
                    className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-700 dark:text-white"
                    style={{ '--tw-ring-color': 'var(--accent)' }}
                  />
@@ -538,7 +537,7 @@ If intent is "action", also provide:
                    onMouseEnter={(e) => e.target.style.opacity = '0.9'}
                    onMouseLeave={(e) => e.target.style.opacity = '1'}
                  >
-                   {languageManager.getTranslation('sendButton')}
+                   Send
                  </button>
                </div>
              </div>
