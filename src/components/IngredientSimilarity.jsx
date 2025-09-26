@@ -80,7 +80,7 @@ export default function IngredientSimilarity() {
         </div>
 
         <p className="text-base-content/60 mb-6">
-          Discover ingredient pairings, substitutes, and complementary flavors using our 
+          Discover ingredient pairings, substitutes, and complementary ingredients using our 
           graph-based similarity model. Enter ingredients separated by commas to get AI-powered suggestions.
         </p>
 
@@ -216,14 +216,14 @@ export default function IngredientSimilarity() {
           <div className="text-sm text-base-content/60 space-y-2">
             <p>
               <strong>Graph Structure:</strong> Each ingredient is a node in the graph, connected by 
-              edges representing flavor compatibility, culinary traditions, and substitutability.
+              edges representing ingredient compatibility, culinary traditions, and substitutability.
             </p>
             <p>
               <strong>Similarity Calculation:</strong> Uses graph traversal algorithms to find the 
               shortest path between ingredients and calculate similarity scores based on edge weights.
             </p>
             <p>
-              <strong>Pairing Logic:</strong> Combines flavor profiles, culinary traditions, and 
+              <strong>Pairing Logic:</strong> Combines ingredient profiles, culinary traditions, and 
               co-occurrence patterns to suggest innovative yet accessible ingredient combinations.
             </p>
           </div>

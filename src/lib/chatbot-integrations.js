@@ -633,7 +633,7 @@ RESPONSE:`;
       'ingredient-explorer': `You are ChefBot on the Ingredient Explorer page. Help users with ingredients by:
 - Finding perfect substitutes
 - Explaining ingredient properties
-- Suggesting flavor combinations
+- Suggesting ingredient combinations
 - Providing storage and preparation tips`
     };
 

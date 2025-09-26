@@ -35,8 +35,8 @@ class IngredientGraph {
       this.addNode(ingredient);
     });
 
-    // Add similarity edges based on flavor profiles and culinary relationships
-    this.addFlavorBasedEdges();
+    // Add similarity edges based on ingredient profiles and culinary relationships
+    this.addIngredientBasedEdges();
     this.addCulinaryPairingEdges();
     this.addSubstituteEdges();
   }
@@ -105,10 +105,10 @@ class IngredientGraph {
   }
 
   /**
-   * Add edges based on flavor profile similarities
+   * Add edges based on ingredient profile similarities
    */
-  addFlavorBasedEdges() {
-    const flavorGroups = {
+  addIngredientBasedEdges() {
+    const ingredientGroups = {
       'sweet': ['honey', 'sugar', 'apple', 'banana', 'mango', 'strawberry', 'blueberry'],
       'savory': ['tomato', 'onion', 'garlic', 'mushroom', 'cheese', 'soy sauce'],
       'spicy': ['chili', 'pepper', 'paprika', 'curry powder'],
@@ -119,8 +119,8 @@ class IngredientGraph {
       'aromatic': ['garlic', 'ginger', 'onion', 'cumin', 'turmeric', 'coriander', 'cardamom']
     };
 
-    // Add edges within flavor groups
-    Object.entries(flavorGroups).forEach(([group, ingredients]) => {
+    // Add edges within ingredient groups
+    Object.entries(ingredientGroups).forEach(([group, ingredients]) => {
       for (let i = 0; i < ingredients.length; i++) {
         for (let j = i + 1; j < ingredients.length; j++) {
           const weight = 0.8; // High similarity within groups
@@ -330,7 +330,7 @@ class IngredientGraph {
 
     if (complementary.length > 0) {
       const topComplement = complementary[0];
-      reasons.push(`${topComplement.ingredient} pairs well with your ingredients due to complementary flavor profiles.`);
+      reasons.push(`${topComplement.ingredient} pairs well with your ingredients due to complementary ingredient profiles.`);
     }
 
     if (substitutes.length > 0) {

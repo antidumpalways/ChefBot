@@ -1,6 +1,6 @@
-# 🍳 ChefBot Pro - AI Recipe & Diet Planning Platform
+# 🍳 ChefBot Pro - Your AI-Powered Culinary Companion
 
-A modern, AI-powered recipe and diet planning application with an intelligent chatbot assistant that helps users discover, create, and share delicious recipes while maintaining healthy eating habits through natural language conversations.
+ChefBot Pro is an innovative AI-driven platform designed to transform the way individuals approach cooking, meal planning, and recipe discovery. Leveraging cutting-edge artificial intelligence, ChefBot Pro offers a highly personalized and interactive culinary experience, catering to everyone from novice cooks to seasoned chefs through our revolutionary AI chatbot assistant.
 
 ![ChefBot Pro](https://img.shields.io/badge/ChefBot-Pro-orange?style=for-the-badge&logo=chef-hat)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)

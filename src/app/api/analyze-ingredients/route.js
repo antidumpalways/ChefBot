@@ -84,7 +84,7 @@ Please respond in JSON format:
     const ingredientNames = geminiResult.ingredients.map(ing => ing.name).join(', ');
     const sensayPrompt = `Based on these identified ingredients: ${ingredientNames}
 
-Please provide cooking suggestions and recipe ideas. Focus on practical cooking methods and flavor combinations.
+Please provide cooking suggestions and recipe ideas. Focus on practical cooking methods and ingredient combinations.
 
 Please respond in JSON format:
 {
@@ -143,7 +143,7 @@ Please respond in JSON format:
       } else {
         sensaySuggestions = [
           "Create a delicious dish with these ingredients",
-          "Try combining flavors for a unique recipe",
+          "Try combining ingredients for a unique recipe",
           "Consider different cooking methods for variety"
         ];
       }

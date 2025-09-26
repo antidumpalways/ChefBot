@@ -3,7 +3,7 @@ export const sensayConfig = {
   // API Base URL
   baseURL: 'https://api.sensay.io/v1',
   
-  // API Key (akan diambil dari environment variables)
+  // API Key
   apiKey: process.env.NEXT_PUBLIC_SENSAY_API_KEY || '',
   
   // Model configuration

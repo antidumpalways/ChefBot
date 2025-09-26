@@ -141,7 +141,7 @@ function generateComplementaryReasoning(baseIngredients, complementary) {
   const topComplements = complementary.slice(0, 3);
   const complementNames = topComplements.map(c => c.ingredient).join(', ');
   
-  return `Based on flavor profile analysis, ${complementNames} would pair well with your ingredients. These suggestions are based on culinary traditions and flavor compatibility.`;
+  return `Based on ingredient profile analysis, ${complementNames} would pair well with your ingredients. These suggestions are based on culinary traditions and ingredient compatibility.`;
 }
 
 /**
@@ -155,7 +155,7 @@ function generateSubstituteReasoning(baseIngredients, substitutes) {
   const topSubstitutes = substitutes.slice(0, 3);
   const substituteNames = topSubstitutes.map(s => s.ingredient).join(', ');
   
-  return `If you're missing any ingredients, ${substituteNames} can be used as alternatives. These substitutes maintain similar flavor profiles and cooking properties.`;
+  return `If you're missing any ingredients, ${substituteNames} can be used as alternatives. These substitutes maintain similar ingredient profiles and cooking properties.`;
 }
 
 /**
