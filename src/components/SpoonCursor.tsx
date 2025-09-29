@@ -14,11 +14,17 @@ export default function SpoonCursor() {
     
     // Don't show custom cursor on mobile devices
     if (isMobile) {
+      // Ensure system cursor is visible if we early return
+      document.documentElement.style.cursor = 'auto';
+      document.body.style.cursor = 'auto';
+      const existing = document.getElementById('spoon-cursor');
+      if (existing && existing.parentElement) existing.parentElement.removeChild(existing);
       return;
     }
 
     // Create cursor element
     const cursor = document.createElement('div');
+    cursor.id = 'spoon-cursor';
     cursor.innerHTML = '🥄';
     cursor.style.position = 'fixed';
     cursor.style.pointerEvents = 'none';
@@ -34,12 +40,6 @@ export default function SpoonCursor() {
     // Hide default cursor globally
     document.documentElement.style.cursor = 'none';
     document.body.style.cursor = 'none';
-    
-    // Hide cursor on all elements
-    const allElements = document.querySelectorAll('*');
-    allElements.forEach(el => {
-      (el as HTMLElement).style.cursor = 'none';
-    });
 
     // Theme observer
     const observer = new MutationObserver((mutations) => {
@@ -63,6 +63,12 @@ export default function SpoonCursor() {
 
     // Mouse move handler
     const handleMouseMove = (e: MouseEvent) => {
+      // If the element was detached by navigation or other scripts, re-attach it
+      if (!document.getElementById('spoon-cursor')) {
+        document.body.appendChild(cursor);
+        document.documentElement.style.cursor = 'none';
+        document.body.style.cursor = 'none';
+      }
       cursor.style.left = e.clientX + 'px';
       cursor.style.top = e.clientY + 'px';
     };
@@ -79,16 +85,30 @@ export default function SpoonCursor() {
       cursor.style.transform = 'translate(-50%, -50%) scale(1)';
     };
 
+    // Ensure cursor survives tab switches / visibility changes
+    const handleVisibilityOrFocus = () => {
+      const exists = document.getElementById('spoon-cursor');
+      if (!exists) {
+        document.body.appendChild(cursor);
+      }
+      document.documentElement.style.cursor = 'none';
+      document.body.style.cursor = 'none';
+    };
+
     // Add event listeners
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
 
     // Cleanup
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
       observer.disconnect();
       if (document.body.contains(cursor)) {
         document.body.removeChild(cursor);
@@ -96,11 +116,6 @@ export default function SpoonCursor() {
       // Restore default cursor
       document.documentElement.style.cursor = 'auto';
       document.body.style.cursor = 'auto';
-      // Restore cursor on all elements
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(el => {
-        (el as HTMLElement).style.cursor = 'auto';
-      });
     };
   }, [currentTheme]);
 

@@ -125,7 +125,7 @@ const [showNutrition, setShowNutrition] = useState(false);
       <div className={`min-h-screen py-10 theme-bg flex flex-col items-center justify-center mt-20 relative transition-all duration-300 ${
         showResults ? "opacity-80 blur-sm" : "opacity-100"
       }`}>
-        <BackButton />
+        {/* Back button removed as requested */}
         
         {/* Main Content Container - Centered */}
         <div className="content-container flex flex-col items-center pt-24">

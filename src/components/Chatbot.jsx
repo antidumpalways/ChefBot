@@ -15,14 +15,37 @@ export default function Chatbot() {
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Auto-scroll only when appropriate (e.g., user sends a message or user is already near bottom)
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage) return;
+
+    // If user is already near the bottom or the last message is from the user/typing indicator, scroll down
+    const container = messagesContainerRef.current;
+    const nearBottom = (() => {
+      if (!container) return true;
+      const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+      return distanceFromBottom < 80; // threshold px
+    })();
+
+    if (isAtBottom || nearBottom || lastMessage.sender === 'user' || lastMessage.isTyping) {
+      scrollToBottom();
+    }
+  }, [messages, isAtBottom]);
+
+  const handleMessagesScroll = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    setIsAtBottom(distanceFromBottom < 80);
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -432,7 +455,7 @@ If intent is "action", also provide:
 
            {/* Messages */}
            {!isMinimized && (
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
+            <div ref={messagesContainerRef} onScroll={handleMessagesScroll} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
                {messages.length === 0 && (
                  <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                    <p>👋 Hi! I'm your cooking assistant.</p>

@@ -1260,7 +1260,7 @@ export default function IngredientExplorer() {
 
   return (
     <div className="min-h-screen bg-base-100 relative">
-      <BackButton fallbackUrl="/" />
+      {/* Back button removed as requested */}
 
       <Navbar
         showResults={showResults}
