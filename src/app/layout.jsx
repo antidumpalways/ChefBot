@@ -48,10 +48,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="light">
       <head>
-        <link
-          rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 15 L35 25 L35 70 L65 70 L65 25 Z' fill='none' stroke='black' stroke-width='3'/><path d='M30 70 L70 70' stroke='black' stroke-width='3'/><path d='M40 25 L40 35 M45 25 L45 35 M50 25 L50 35 M55 25 L55 35 M60 25 L60 35' stroke='black' stroke-width='2'/></svg>"
-        />
+        {/* Favicon (multiple sizes for better clarity and larger displays) */}
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="256x256" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon.png" />
+        <link rel="icon" type="image/png" sizes="any" href="/images/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png" />
+        <link rel="shortcut icon" href="/images/favicon.png" />
       </head>
       <body className={`${inter.variable} ${lora.variable} ${dmSerifDisplay.variable} ${robotoCondensed.variable} ${poppins.variable} font-roboto-condensed`}>
         <AuthProvider>
