@@ -271,7 +271,8 @@ Only show button if user clearly wants to use a specific feature, not for genera
     ];
     
     // Check for explicit recipe generator request
-    if (message.includes('recipe generator') || message.includes('use recipe generator')) {
+    if (message.includes('recipe generator') || message.includes('use recipe generator') || 
+        message.includes('generate a random recipe') || message.includes('random recipe')) {
       console.log('✅ Detected recipe generator intent');
       return {
         type: 'recipe-generator',
@@ -373,6 +374,48 @@ Only show button if user clearly wants to use a specific feature, not for genera
   // Main intent detection function (now AI-powered)
   async detectUserIntent(userMessage, botResponse = '', conversationHistory = []) {
     return await this.detectUserIntentWithAI(userMessage, botResponse, conversationHistory);
+  }
+
+  // Simple fallback intent detection (no AI call)
+  detectUserIntentFallback(userMessage, botResponse = '', conversationHistory = []) {
+    const message = userMessage.toLowerCase();
+    console.log('🔍 Fallback detecting intent for message:', message);
+    
+    // Check for recipe generation intent
+    if (message.includes('random recipe') || message.includes('generate recipe') || 
+        message.includes('recipe') || message.includes('cook') || message.includes('dish')) {
+      console.log('✅ Detected recipe generator intent');
+      return {
+        type: 'recipe-generator',
+        text: '🍳 Generate Detailed Recipe',
+        action: 'navigate',
+        params: { path: '/ai' }
+      };
+    }
+    
+    // Check for nutrition intent
+    if (message.includes('nutrition') || message.includes('calories') || 
+        message.includes('healthy') || message.includes('diet')) {
+      return {
+        type: 'nutrition-ai',
+        text: '🥗 Analyze Nutrition',
+        action: 'navigate',
+        params: { path: '/nutrition' }
+      };
+    }
+    
+    // Check for diet planner intent
+    if (message.includes('meal plan') || message.includes('diet plan') || 
+        message.includes('weekly meal')) {
+      return {
+        type: 'diet-planner',
+        text: '📅 Plan My Diet',
+        action: 'navigate',
+        params: { path: '/diet-planner' }
+      };
+    }
+    
+    return null; // No suggested action
   }
 
   // AI-powered context analysis (kept for fallback)

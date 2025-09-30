@@ -92,6 +92,260 @@ const [showNutrition, setShowNutrition] = useState(false);
     }
   };
   
+  // Read prefill data from sessionStorage and hash flags
+  const [prefill, setPrefill] = useState(null);
+  const [autoGen, setAutoGen] = useState(false);
+  const [focusUpload, setFocusUpload] = useState(false);
+
+  // AI auto-detect cuisine based on dish name
+  const detectCuisineFromDishName = (dishName) => {
+    if (!dishName) return 'International';
+    
+    const name = dishName.toLowerCase();
+    
+    // Indian cuisine keywords
+    if (name.includes('curry') || name.includes('dal') || name.includes('biryani') || 
+        name.includes('tikka') || name.includes('masala') || name.includes('lentil') ||
+        name.includes('chana') || name.includes('rajma') || name.includes('samosa')) {
+      return 'Indian';
+    }
+    
+    // Italian cuisine keywords
+    if (name.includes('pasta') || name.includes('pizza') || name.includes('risotto') ||
+        name.includes('carbonara') || name.includes('alfredo') || name.includes('parmesan') ||
+        name.includes('mozzarella') || name.includes('bolognese') || name.includes('fettuccine')) {
+      return 'Italian';
+    }
+    
+    // Mexican cuisine keywords
+    if (name.includes('taco') || name.includes('burrito') || name.includes('salsa') ||
+        name.includes('quesadilla') || name.includes('enchilada') || name.includes('guacamole') ||
+        name.includes('nachos') || name.includes('fajita')) {
+      return 'Mexican';
+    }
+    
+    // Thai cuisine keywords
+    if (name.includes('pad thai') || name.includes('tom yum') || name.includes('green curry') ||
+        name.includes('thai') || name.includes('coconut milk') || name.includes('lemongrass')) {
+      return 'Thai';
+    }
+    
+    // Chinese cuisine keywords
+    if (name.includes('chow mein') || name.includes('kung pao') || name.includes('lo mein') ||
+        name.includes('wonton') || name.includes('dim sum') || name.includes('szechuan') ||
+        name.includes('teriyaki') || name.includes('chinese')) {
+      return 'Chinese';
+    }
+    
+    // Japanese cuisine keywords
+    if (name.includes('sushi') || name.includes('ramen') || name.includes('tempura') ||
+        name.includes('miso') || name.includes('wasabi') || name.includes('japanese') ||
+        name.includes('udon') || name.includes('yakitori')) {
+      return 'Japanese';
+    }
+    
+    // American cuisine keywords
+    if (name.includes('burger') || name.includes('bbq') || name.includes('barbecue') ||
+        name.includes('mac and cheese') || name.includes('fried chicken') || name.includes('hot dog') ||
+        name.includes('buffalo wings') || name.includes('american')) {
+      return 'American';
+    }
+    
+    // French cuisine keywords
+    if (name.includes('ratatouille') || name.includes('crepe') || name.includes('bouillabaisse') ||
+        name.includes('coq au vin') || name.includes('french') || name.includes('brie') ||
+        name.includes('croissant') || name.includes('quiche')) {
+      return 'French';
+    }
+    
+    // Mediterranean cuisine keywords
+    if (name.includes('hummus') || name.includes('tabbouleh') || name.includes('falafel') ||
+        name.includes('mediterranean') || name.includes('olive oil') || name.includes('feta') ||
+        name.includes('tzatziki') || name.includes('gyro')) {
+      return 'Mediterranean';
+    }
+    
+    // Korean cuisine keywords
+    if (name.includes('kimchi') || name.includes('bulgogi') || name.includes('bibimbap') ||
+        name.includes('korean') || name.includes('gochujang') || name.includes('korean bbq')) {
+      return 'Korean';
+    }
+    
+    return 'International'; // Default fallback
+  };
+
+  useEffect(() => {
+    try {
+      const data = sessionStorage.getItem('chatbot-recipe-params');
+      if (data) {
+        const recipeData = JSON.parse(data);
+        // Only prefill basic info, not all fields
+        // Get the latest bot response for dish name
+        const latestBotResponse = sessionStorage.getItem('latest-bot-response');
+        console.log('🔍 Latest bot response:', latestBotResponse);
+        console.log('🔍 Recipe data userPrompt:', recipeData.userPrompt);
+        
+        let dishName = recipeData.userPrompt || '';
+        
+        if (latestBotResponse) {
+          try {
+            const botText = JSON.parse(latestBotResponse);
+            console.log('🔍 Parsed bot text:', botText);
+            const cleanText = botText.replace(/<[^>]*>/g, '');
+            const firstSentence = cleanText.split('.')[0] || cleanText.split('!')[0];
+            console.log('🔍 First sentence:', firstSentence);
+            if (firstSentence && firstSentence.length > 10) {
+              dishName = firstSentence;
+              console.log('🔍 Using dish name from bot response:', dishName);
+            }
+          } catch (e) {
+            console.warn('Failed to parse latest bot response for prefill:', e);
+          }
+        }
+        
+        // AI auto-detect cuisine based on dish name
+        const detectedCuisine = detectCuisineFromDishName(dishName);
+        console.log('🔍 Detected cuisine:', detectedCuisine);
+        console.log('🔍 Final dish name:', dishName);
+        
+        setPrefill({
+          userPrompt: dishName,
+          dishType: '', // Let user choose
+          cuisine: detectedCuisine, // AI auto-detected cuisine
+          dietaryRestrictions: [],
+          spiceLevel: '',
+          skillLevel: '',
+          cookingMethod: ''
+        });
+        
+        // Clean up after setting prefill
+        sessionStorage.removeItem('chatbot-recipe-params');
+        
+        // Check if this is auto-generate flow or interactive flow
+        const hash = window.location.hash;
+        
+        if (hash === '#autogen') {
+          // Auto-generate flow - bot gives smart follow-up
+          setTimeout(() => {
+            const latestBotResponse = sessionStorage.getItem('latest-bot-response');
+            let dishName = 'recipe';
+            
+            if (latestBotResponse) {
+              try {
+                const botText = JSON.parse(latestBotResponse);
+                const cleanText = botText.replace(/<[^>]*>/g, '');
+                const firstSentence = cleanText.split('.')[0] || cleanText.split('!')[0];
+                if (firstSentence && firstSentence.length > 10) {
+                  dishName = firstSentence;
+                }
+              } catch (e) {
+                console.warn('Failed to parse latest bot response:', e);
+              }
+            }
+            
+            const smartFollowUpMessage = {
+              id: Date.now(),
+              text: `Perfect! I'll generate your ${dishName} recipe. Or would you like to customize any details first?`,
+              sender: 'bot',
+              timestamp: new Date(),
+              suggestedAction: {
+                type: 'recipe-generator-final',
+                options: ['Generate Now', 'Customize Details']
+              }
+            };
+            
+            // Send message to chatbot via custom event
+            window.dispatchEvent(new CustomEvent('chatbot-stage2', { 
+              detail: smartFollowUpMessage 
+            }));
+          }, 1500);
+        } else {
+          // Interactive questioning flow
+          setTimeout(() => {
+            // Get the latest bot response from sessionStorage or use a generic message
+            const latestBotResponse = sessionStorage.getItem('latest-bot-response');
+            let dishName = 'recipe';
+            
+            if (latestBotResponse) {
+              try {
+                const botText = JSON.parse(latestBotResponse);
+                // Extract dish name from bot response
+                const cleanText = botText.replace(/<[^>]*>/g, '');
+                const firstSentence = cleanText.split('.')[0] || cleanText.split('!')[0];
+                if (firstSentence && firstSentence.length > 10) {
+                  dishName = firstSentence;
+                }
+              } catch (e) {
+                console.warn('Failed to parse latest bot response:', e);
+              }
+            }
+            
+            const interactiveMessage = {
+              id: Date.now(),
+              text: `Great! I'll help you customize your ${dishName}. Let's start with the dish type. What type of dish would you like?`,
+              sender: 'bot',
+              timestamp: new Date(),
+              suggestedAction: { 
+                type: 'interactive-form',
+                step: 'dishType',
+                options: ['Main Courses', 'Appetizers & Sides', 'Desserts', 'Beverages', 'Snacks']
+              },
+              optionButtons: ['Main Courses', 'Appetizers & Sides', 'Desserts', 'Beverages', 'Snacks'].map(option => ({
+                text: option,
+                onClick: () => {
+                  // Handle option button click directly
+                  const userMessage = {
+                    id: Date.now(),
+                    text: option,
+                    sender: 'user',
+                    timestamp: new Date()
+                  };
+                  
+                  // Add user message to chatbot
+                  window.dispatchEvent(new CustomEvent('chatbot-user-message', {
+                    detail: userMessage
+                  }));
+                  
+                  // Parse and update form
+                  const parsedValue = option === 'Main Courses' ? 'Main Courses' : 
+                                    option === 'Appetizers & Sides' ? 'Appetizers & Sides' :
+                                    option === 'Desserts' ? 'Desserts' :
+                                    option === 'Beverages' ? 'Beverages' : 'Snacks';
+                  
+                  window.dispatchEvent(new CustomEvent('form-field-update', {
+                    detail: { field: 'dishType', value: parsedValue }
+                  }));
+                  
+                  // Continue with next question
+                  window.dispatchEvent(new CustomEvent('chatbot-option-click', {
+                    detail: { option, step: 'dishType' }
+                  }));
+                }
+              }))
+            };
+            
+            // Send message to chatbot via custom event
+            window.dispatchEvent(new CustomEvent('chatbot-stage2', { 
+              detail: interactiveMessage 
+            }));
+          }, 1500);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to read chatbot prefill:', e);
+    }
+
+    const hash = window.location.hash;
+    // Don't auto-generate immediately, wait for user confirmation
+    if (hash === '#upload') {
+      setFocusUpload(true);
+    }
+    // Clear hash to avoid re-triggering on back/forward
+    if (hash) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+  
   const fetchNutrition = async () => {
   if (!nutritionInput.trim()) return;
   setLoadingNutrition(true);
@@ -141,6 +395,9 @@ const [showNutrition, setShowNutrition] = useState(false);
               setShowRecipe={setShowRecipe}
               setRecipeImageUrl={setRecipeImageUrl}
               onResetRef={formResetRef}
+              initialData={prefill}
+              autoGenerate={Boolean(prefill && autoGen)}
+              focusUpload={Boolean(prefill && focusUpload)}
             />
           )}
 

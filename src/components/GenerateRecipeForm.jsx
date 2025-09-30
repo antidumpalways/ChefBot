@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import {
   CheckboxField,
@@ -22,7 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
  * @param {Function} setShowRecipe - Controls recipe display visibility
  * @param {Function} setRecipeImageUrl - Updates recipe image URL
  */
-function GenerateRecipeForm({ setRecipe, setShowRecipe, setRecipeImageUrl, onResetRef }) {
+function GenerateRecipeForm({ setRecipe, setShowRecipe, setRecipeImageUrl, onResetRef, initialData, autoGenerate = false, focusUpload = false }) {
   const { user } = useAuth();
   const [analyzedIngredients, setAnalyzedIngredients] = useState([]);
   const [error, setError] = useState(null);
@@ -31,12 +31,12 @@ function GenerateRecipeForm({ setRecipe, setShowRecipe, setRecipeImageUrl, onRes
   const { register, handleSubmit, reset, watch, setValue } = useForm({
     defaultValues: {
       userPrompt: "",
-      dishType: "Snack",
-      cuisine: "Indian",
+      dishType: "",
+      cuisine: "International",
       dietaryRestrictions: [],
-      spiceLevel: "Spicy",
-      skillLevel: "Intermediate",
-      cookingMethod: "Any",
+      spiceLevel: "",
+      skillLevel: "",
+      cookingMethod: "",
     },
   });
 
@@ -52,12 +52,12 @@ function GenerateRecipeForm({ setRecipe, setShowRecipe, setRecipeImageUrl, onRes
         
         // Set appropriate dish type based on meal type
         const mealTypeMap = {
-          'breakfast': 'Breakfast',
-          'lunch': 'Main Course',
-          'dinner': 'Main Course',
-          'snack': 'Appetizer'
+          'breakfast': 'Main Courses',
+          'lunch': 'Main Courses',
+          'dinner': 'Main Courses',
+          'snack': 'Snacks'
         };
-        setValue('dishType', mealTypeMap[mealData.mealType.toLowerCase()] || 'Main Course');
+        setValue('dishType', mealTypeMap[mealData.mealType.toLowerCase()] || 'Main Courses');
         
         // Store meal info for display
         setDietMealInfo(mealData);
@@ -73,6 +73,91 @@ function GenerateRecipeForm({ setRecipe, setShowRecipe, setRecipeImageUrl, onRes
   if (onResetRef) {
     onResetRef.current = reset;
   }
+
+  // Prefill from initialData
+  useEffect(() => {
+    if (!initialData) return;
+    try {
+      if (initialData.userPrompt) setValue('userPrompt', initialData.userPrompt);
+      if (initialData.dishType) setValue('dishType', initialData.dishType);
+      if (initialData.cuisine) setValue('cuisine', initialData.cuisine);
+      if (Array.isArray(initialData.dietaryRestrictions)) setValue('dietaryRestrictions', initialData.dietaryRestrictions);
+      if (initialData.spiceLevel) setValue('spiceLevel', initialData.spiceLevel);
+      if (initialData.skillLevel) setValue('skillLevel', initialData.skillLevel);
+      if (initialData.cookingMethod) setValue('cookingMethod', initialData.cookingMethod);
+      if (Array.isArray(initialData.ingredients) && initialData.ingredients.length > 0) {
+        setAnalyzedIngredients(initialData.ingredients.map((name) => ({ name })));
+      }
+    } catch (e) {
+      console.warn('Prefill failed:', e);
+    }
+  }, [initialData, setValue]);
+
+  // Focus/scroll to upload section when requested
+  const uploadRef = useRef(null);
+  useEffect(() => {
+    if (focusUpload && uploadRef.current) {
+      try {
+        uploadRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {}
+    }
+  }, [focusUpload]);
+
+  // Listen for form field updates from chatbot
+  useEffect(() => {
+    const handleFormFieldUpdate = (event) => {
+      const { field, value } = event.detail;
+      console.log('📝 Updating form field:', field, value);
+      
+      switch (field) {
+        case 'dishType':
+          setValue('dishType', value);
+          break;
+        case 'dietaryRestrictions':
+          setValue('dietaryRestrictions', value);
+          break;
+        case 'spiceLevel':
+          setValue('spiceLevel', value);
+          break;
+        case 'skillLevel':
+          setValue('skillLevel', value);
+          break;
+        case 'cookingMethod':
+          setValue('cookingMethod', value);
+          break;
+        default:
+          console.warn('Unknown field:', field);
+      }
+    };
+
+    window.addEventListener('form-field-update', handleFormFieldUpdate);
+    return () => window.removeEventListener('form-field-update', handleFormFieldUpdate);
+  }, [setValue]);
+
+  // Listen for auto-generate trigger from chatbot
+  useEffect(() => {
+    const handleAutoGenerate = () => {
+      console.log('🚀 Auto-generate triggered from chatbot');
+      handleSubmit(onSubmit)();
+    };
+
+    window.addEventListener('trigger-auto-generate', handleAutoGenerate);
+    return () => window.removeEventListener('trigger-auto-generate', handleAutoGenerate);
+  }, [handleSubmit]);
+
+  // Auto-generate after prefill
+  useEffect(() => {
+    if (!autoGenerate) return;
+    // Tiny delay to ensure form values applied
+    const t = setTimeout(() => {
+      try {
+        handleSubmit(onSubmit)();
+      } catch (e) {
+        console.warn('Auto-generate failed:', e);
+      }
+    }, 50);
+    return () => clearTimeout(t);
+  }, [autoGenerate]);
 
   /**
    * Form submission handler
@@ -323,7 +408,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
 
         const generateRealisticInstructions = () => {
           const baseInstructions = {
-            "Main Course": [
+            "Main Courses": [
               "Prepare all ingredients and chop vegetables",
               "Heat oil in a large pan over medium heat",
               "Add aromatics and cook until fragrant",
@@ -333,7 +418,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               "Taste and adjust seasoning",
               "Serve hot with rice or bread"
             ],
-            "Appetizer": [
+            "Appetizers & Sides": [
               "Prepare all ingredients and preheat oven",
               "Mix ingredients in a bowl until well combined",
               "Shape into desired form or portion",
@@ -342,7 +427,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               "Let cool slightly before serving",
               "Serve immediately with dipping sauce"
             ],
-            "Dessert": [
+            "Desserts": [
               "Preheat oven to required temperature",
               "Mix dry ingredients in a large bowl",
               "Add wet ingredients and combine until smooth",
@@ -350,10 +435,28 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
               "Bake until golden and set in center",
               "Let cool completely before serving",
               "Garnish with fresh fruits or cream"
+            ],
+            "Beverages": [
+              "Gather all ingredients and equipment",
+              "Prepare any fresh ingredients needed",
+              "Mix ingredients according to recipe",
+              "Blend or shake if required",
+              "Strain if necessary",
+              "Taste and adjust sweetness",
+              "Serve chilled or at room temperature"
+            ],
+            "Snacks": [
+              "Preheat oven or prepare cooking surface",
+              "Prepare and mix ingredients",
+              "Shape or portion as needed",
+              "Cook until crispy and golden",
+              "Season while hot",
+              "Let cool slightly",
+              "Serve immediately"
             ]
           };
           
-          return baseInstructions[data.dishType] || baseInstructions["Main Course"];
+          return baseInstructions[data.dishType] || baseInstructions["Main Courses"];
         };
         
         recipe = {
@@ -481,10 +584,12 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
         </div>
       )}
 
+      <div ref={uploadRef}>
       <ImageUpload
         onIngredientsAnalyzed={setAnalyzedIngredients}
         analyzedIngredients={analyzedIngredients}
       />
+      </div>
 
       <InputField
         label="Describe about dish:"
@@ -497,7 +602,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
         <SelectField
           label="Type of Dish:"
           name="dishType"
-          options={["", "Appetizer", "Main Course", "Dessert", "Snack", "Beverage", "Breakfast", "Lunch", "Dinner", "Soup", "Salad", "Pasta", "Rice Dish", "Grilled", "Baked", "Fried", "Steamed", "Raw/Sushi", "Smoothie", "Cocktail"]}
+          options={["", "Main Courses", "Appetizers & Sides", "Desserts", "Beverages", "Snacks"]}
           register={register}
         />
 
@@ -585,7 +690,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
             type="button"
             onClick={() => {
               setValue('cuisine', 'Mexican');
-              setValue('dishType', 'Main Course');
+              setValue('dishType', 'Main Courses');
               setValue('spiceLevel', 'Spicy');
               setValue('skillLevel', 'Intermediate');
             }}
@@ -602,7 +707,7 @@ Make sure to include specific quantities, detailed cooking steps, and realistic 
             type="button"
             onClick={() => {
               setValue('cuisine', 'American');
-              setValue('dishType', 'Breakfast');
+              setValue('dishType', 'Main Courses');
               setValue('spiceLevel', 'Mild');
               setValue('skillLevel', 'Beginner');
             }}
