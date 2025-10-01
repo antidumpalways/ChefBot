@@ -33,6 +33,8 @@ export default function Chatbot() {
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
   const [askedFields, setAskedFields] = useState({});
   const [lockedFields, setLockedFields] = useState({});
+  const [dietFlowActive, setDietFlowActive] = useState(false);
+  const [dietPrefs, setDietPrefs] = useState({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
 
   // Schema: allowed follow-up fields by dish type (guards irrelevant questions)
   const DISH_TYPE_FIELDS = {
@@ -830,6 +832,356 @@ Please respond with a JSON object containing:
     return html;
   };
 
+  const startDietFlow = async () => {
+    try {
+      setDietFlowActive(true);
+      const prompt = `You are a diet planning assistant. Ask ONE short question to get the user's main goal (lose weight, gain muscle, maintain). Keep it under 12 words, no options.`;
+      const res = await fetch('/api/sensay-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: prompt, userId: `diet-q-${chatSessionId}`, source: 'web', skipHistory: true }) });
+      const data = await res.json();
+      const question = (data?.content || 'What is your main diet goal?').trim();
+      setMessages(prev => [...prev, { id: Date.now(), text: question, sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'goal' } }]);
+    } catch {
+      setMessages(prev => [...prev, { id: Date.now(), text: 'What is your main diet goal?', sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'goal' } }]);
+    }
+  };
+
+  const handleDietCustomization = async (userMessage, lastBotMessage) => {
+    const step = lastBotMessage.suggestedAction.step;
+    
+    // Handle confirmation step
+    if (step === 'confirm') {
+      if (/(yes|yep|sure|ok|generate|lanjut|gas|oke)/i.test(userMessage)) {
+        await generateDietPlan();
+        return;
+      } else {
+        setMessages(prev => [...prev, { 
+          id: Date.now(), 
+          text: 'No problem! Feel free to ask for a diet plan anytime.', 
+          sender: 'bot', 
+          timestamp: new Date() 
+        }]);
+        setDietFlowActive(false);
+        setDietPrefs({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
+        return;
+      }
+    }
+    
+    // Try local keyword extraction first (faster and more reliable)
+    const updatedPrefs = { ...dietPrefs };
+    const userInput = userMessage.toLowerCase().trim();
+    
+    // Extract goal locally
+    if (step === 'goal' || !updatedPrefs.goal) {
+      if (/(lose\s*weight|weight\s*loss|cut|deficit|turun\s*berat)/i.test(userInput)) {
+        updatedPrefs.goal = 'cut';
+      } else if (/(gain\s*muscle|bulk|mass|naik\s*berat|tambah\s*otot)/i.test(userInput)) {
+        updatedPrefs.goal = 'bulk';
+      } else if (/(maintain|keep|jaga)/i.test(userInput)) {
+        updatedPrefs.goal = 'maintain';
+      } else if (/(health|sehat|wellness)/i.test(userInput)) {
+        updatedPrefs.goal = 'general_health';
+      }
+    }
+    
+    // Extract calories locally
+    if (step === 'calories' || (!updatedPrefs.calories && /\d{3,4}/.test(userInput))) {
+      const calorieMatch = userInput.match(/(\d{3,4})/);
+      if (calorieMatch) {
+        updatedPrefs.calories = parseInt(calorieMatch[1]);
+      } else if (/(auto|calculate|hitung)/i.test(userInput)) {
+        updatedPrefs.calories = 'auto';
+      }
+    }
+    
+    // Extract days locally
+    if (step === 'days' || (!updatedPrefs.days && /\d+\s*(day|hari|week|minggu)/i.test(userInput))) {
+      const dayMatch = userInput.match(/(\d+)\s*(day|hari)/i);
+      const weekMatch = userInput.match(/(\d+)\s*(week|minggu)/i);
+      if (weekMatch) {
+        updatedPrefs.days = parseInt(weekMatch[1]) * 7;
+      } else if (dayMatch) {
+        updatedPrefs.days = parseInt(dayMatch[1]);
+      }
+    }
+    
+    // Extract meals per day locally
+    if (step === 'mealsPerDay' || (!updatedPrefs.mealsPerDay && /\d+\s*meal/i.test(userInput))) {
+      const mealMatch = userInput.match(/(\d+)\s*meal/i);
+      if (mealMatch) {
+        updatedPrefs.mealsPerDay = parseInt(mealMatch[1]);
+      }
+    }
+    
+    // Extract exclusions locally
+    if (step === 'exclusions') {
+      if (/(vegetarian|no\s*meat|tanpa\s*daging)/i.test(userInput)) {
+        updatedPrefs.exclusions = 'vegetarian';
+      } else if (/(vegan|plant\s*based)/i.test(userInput)) {
+        updatedPrefs.exclusions = 'vegan';
+      } else if (/(no\s*dairy|lactose)/i.test(userInput)) {
+        updatedPrefs.exclusions = 'no dairy';
+      } else if (/(none|no|tidak|gak\s*ada)/i.test(userInput)) {
+        updatedPrefs.exclusions = 'none';
+      } else {
+        updatedPrefs.exclusions = userInput;
+      }
+    }
+    
+    // Extract cuisine preference locally
+    if (step === 'cuisinePrefs') {
+      if (/(asian|asia)/i.test(userInput)) {
+        updatedPrefs.cuisinePrefs = 'Asian';
+      } else if (/(mediterranean|mediterania)/i.test(userInput)) {
+        updatedPrefs.cuisinePrefs = 'Mediterranean';
+      } else if (/(western|barat)/i.test(userInput)) {
+        updatedPrefs.cuisinePrefs = 'Western';
+      } else if (/(indonesian|indonesia)/i.test(userInput)) {
+        updatedPrefs.cuisinePrefs = 'Indonesian';
+      } else if (/(mixed|any|apa\s*saja)/i.test(userInput)) {
+        updatedPrefs.cuisinePrefs = 'Mixed';
+      }
+    }
+    
+    setDietPrefs(updatedPrefs);
+    
+    try {
+      // Determine next step based on updated preferences
+      const nextStep = getNextDietStep(updatedPrefs, step);
+      
+      if (nextStep === 'confirm') {
+        // Show confirmation and generate plan
+        const confirmationText = `Perfect! Here's what I understand:
+• Goal: ${updatedPrefs.goal || 'Not specified'}
+• Calories: ${updatedPrefs.calories || 'Auto-calculated'}
+• Duration: ${updatedPrefs.days || '7'} days
+• Meals per day: ${updatedPrefs.mealsPerDay || '3'}
+• Exclusions: ${updatedPrefs.exclusions || 'None'}
+• Cuisine: ${updatedPrefs.cuisinePrefs || 'Mixed'}
+
+Ready to generate your personalized diet plan?`;
+
+        setMessages(prev => [...prev, { 
+          id: Date.now(), 
+          text: confirmationText, 
+          sender: 'bot', 
+          timestamp: new Date(), 
+          suggestedAction: { type: 'diet-customization', step: 'confirm' } 
+        }]);
+      } else {
+        // Ask next question
+        const nextQuestion = await generateDietQuestion(nextStep, updatedPrefs);
+        setMessages(prev => [...prev, { 
+          id: Date.now(), 
+          text: nextQuestion, 
+          sender: 'bot', 
+          timestamp: new Date(), 
+          suggestedAction: { type: 'diet-customization', step: nextStep } 
+        }]);
+      }
+      
+    } catch (error) {
+      console.error('Diet customization error:', error);
+      setMessages(prev => [...prev, { 
+        id: Date.now(), 
+        text: 'I had trouble understanding that. Could you please rephrase?', 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        suggestedAction: { type: 'diet-customization', step } 
+      }]);
+    }
+  };
+
+  const getNextDietStep = (prefs, currentStep) => {
+    // If goal is set, skip to confirmation (we can use defaults for other fields)
+    if (prefs.goal && currentStep === 'goal') {
+      return 'confirm';
+    }
+    
+    // Otherwise follow the sequence
+    if (!prefs.goal) return 'goal';
+    if (!prefs.calories && currentStep === 'calories') return 'calories';
+    if (!prefs.days && currentStep === 'days') return 'days';
+    if (!prefs.mealsPerDay && currentStep === 'mealsPerDay') return 'mealsPerDay';
+    if (!prefs.exclusions && currentStep === 'exclusions') return 'exclusions';
+    if (!prefs.cuisinePrefs && currentStep === 'cuisinePrefs') return 'cuisinePrefs';
+    
+    return 'confirm';
+  };
+
+  const generateDietQuestion = async (step, prefs) => {
+    const questions = {
+      goal: 'What is your main diet goal? (lose weight, gain muscle, maintain, or general health)',
+      calories: 'How many calories per day? (or say "auto" for calculation)',
+      days: 'How many days for your diet plan? (default: 7 days)',
+      mealsPerDay: 'How many meals per day? (default: 3 meals)',
+      exclusions: 'Any foods to avoid? (e.g., "no meat", "vegetarian", "no dairy")',
+      cuisinePrefs: 'Preferred cuisine style? (e.g., "asian", "mediterranean", "western")'
+    };
+    
+    return questions[step] || 'Any other preferences?';
+  };
+
+  const generateDietPlan = async () => {
+    try {
+      setMessages(prev => [...prev, { 
+        id: Date.now(), 
+        text: '🍽️ Generating your personalized diet plan...', 
+        sender: 'bot', 
+        timestamp: new Date() 
+      }]);
+
+      // Prepare diet plan request
+      const dietRequest = {
+        height: 170, // Default values - in real app, get from user profile
+        weight: 70,
+        age: 30,
+        gender: 'male',
+        activityLevel: 'moderate',
+        goal: dietPrefs.goal || 'maintain',
+        dietPreference: dietPrefs.cuisinePrefs || 'balanced',
+        bloodSugar: 'normal',
+        bloodPressure: 'normal',
+        dietaryRestrictions: dietPrefs.exclusions || [],
+        allergies: [],
+        targetDate: new Date().toISOString().split('T')[0]
+      };
+
+      const response = await fetch('/api/generate-diet-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dietRequest)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate diet plan');
+      }
+
+      const dietPlan = await response.json();
+      
+      // Render diet plan in chat
+      const dietPlanHtml = renderDietPlan(dietPlan);
+      
+      setMessages(prev => [...prev, { 
+        id: Date.now(), 
+        text: dietPlanHtml, 
+        sender: 'bot', 
+        timestamp: new Date(),
+        isHtml: true
+      }]);
+
+      // Reset diet flow
+      setDietFlowActive(false);
+      setDietPrefs({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
+
+    } catch (error) {
+      console.error('Diet plan generation error:', error);
+      setMessages(prev => [...prev, { 
+        id: Date.now(), 
+        text: 'Sorry, I had trouble generating your diet plan. Please try again.', 
+        sender: 'bot', 
+        timestamp: new Date() 
+      }]);
+    }
+  };
+
+  const renderDietPlan = (plan) => {
+    const { userProfile, weeklyDietPlan } = plan;
+    
+    let html = `
+      <div class="diet-plan-container" style="background: white; border-radius: 12px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h3 style="color: #2d3748; margin-bottom: 15px; text-align: center;">🍽️ Your Personalized Diet Plan</h3>
+        
+        <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h4 style="color: #4a5568; margin-bottom: 10px;">📊 Daily Targets</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+            <div style="text-align: center;">
+              <div style="font-size: 18px; font-weight: bold; color: #e53e3e;">${userProfile.targetCalories}</div>
+              <div style="font-size: 12px; color: #718096;">Calories</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 18px; font-weight: bold; color: #38a169;">${userProfile.bmi}</div>
+              <div style="font-size: 12px; color: #718096;">BMI</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 18px; font-weight: bold; color: #3182ce;">${userProfile.bmr}</div>
+              <div style="font-size: 12px; color: #718096;">BMR</div>
+            </div>
+          </div>
+        </div>
+    `;
+
+    // Render each day
+    weeklyDietPlan.days.forEach((day, index) => {
+      html += `
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px; overflow: hidden;">
+          <div style="background: #edf2f7; padding: 10px; font-weight: bold; color: #2d3748;">
+            📅 ${day.day} - ${day.date}
+          </div>
+          <div style="padding: 15px;">
+      `;
+
+      day.meals.forEach((meal, mealIndex) => {
+        const mealIcons = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
+        html += `
+          <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: bold; color: #2d3748;">${mealIcons[meal.type]} ${meal.name}</span>
+              <span style="font-size: 14px; color: #e53e3e; font-weight: bold;">${meal.calories} cal</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px;">
+              <div style="text-align: center; font-size: 12px;">
+                <div style="color: #38a169; font-weight: bold;">${meal.protein}g</div>
+                <div style="color: #718096;">Protein</div>
+              </div>
+              <div style="text-align: center; font-size: 12px;">
+                <div style="color: #3182ce; font-weight: bold;">${meal.carbs}g</div>
+                <div style="color: #718096;">Carbs</div>
+              </div>
+              <div style="text-align: center; font-size: 12px;">
+                <div style="color: #d69e2e; font-weight: bold;">${meal.fat}g</div>
+                <div style="color: #718096;">Fat</div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #4a5568;">
+              <strong>Ingredients:</strong> ${meal.ingredients.map(ing => `${ing.name} (${ing.amount})`).join(', ')}
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+    });
+
+    // Add health notes
+    if (weeklyDietPlan.healthNotes && weeklyDietPlan.healthNotes.length > 0) {
+      html += `
+        <div style="background: #e6fffa; border-left: 4px solid #38a169; padding: 15px; margin-top: 20px;">
+          <h4 style="color: #2d3748; margin-bottom: 10px;">💡 Health Tips</h4>
+          <ul style="margin: 0; padding-left: 20px;">
+            ${weeklyDietPlan.healthNotes.map(note => `<li style="color: #4a5568; margin-bottom: 5px;">${note}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    html += `
+        <div style="text-align: center; margin-top: 20px;">
+          <button onclick="window.print()" style="background: #3182ce; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
+            🖨️ Print Plan
+          </button>
+          <button onclick="alert('Feature coming soon!')" style="background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+            📱 Save to App
+          </button>
+        </div>
+      </div>
+    `;
+
+    return html;
+  };
+
   // Handle option button click directly
   const handleOptionButtonClick = (option, step) => {
     console.log('🔘 Option button clicked:', option, step);
@@ -1385,6 +1737,13 @@ Conversation Length: ${conversationHistory.length}
 User Language: ${userLanguage}
 Context: ${JSON.stringify(context)}
 
+Action types:
+- recipe-generator: requests for recipes, cooking, food generation
+- diet-planner: requests for meal plans, diet plans, weekly meals, nutrition planning, "plan my diet", "plan your weekly meals"
+- community: requests about sharing, community features
+- ingredient-explorer: requests about ingredients, substitutions
+- nutrition-analyzer: requests for nutrition analysis
+
 Please respond with ONLY a JSON object containing:
 {
   "intent": "action" | "discussion" | "unclear",
@@ -1423,7 +1782,9 @@ If intent is "action", also provide:
 
   // Fallback keyword-based detection
   const fallbackIntentDetection = (userMessage, botResponse) => {
-    const message = userMessage.toLowerCase();
+    // Remove emojis and normalize text for better matching
+    const normalizedMessage = userMessage.replace(/[📊📅🍽️🎯💡]/g, '').toLowerCase();
+    const message = normalizedMessage;
     const userLanguage = detectLanguage(userMessage);
     
     // Check for explicit action requests
@@ -1439,15 +1800,18 @@ If intent is "action", also provide:
       };
     }
     
-    if (message.includes('diet plan') || message.includes('meal plan')) {
+    if (message.includes('diet plan') || message.includes('meal plan') || message.includes('diet planner') ||
+        message.includes('plan your weekly meals') || message.includes('plan my diet') ||
+        message.includes('weekly meals') || message.includes('meal planning') ||
+        message.includes('diet planning') || message.includes('nutrition plan')) {
       return {
         intent: 'action',
         actionType: 'diet-planner',
         confidence: 0.9,
         reasoning: 'Explicit diet planning request',
         ctaText: userLanguage === 'id'
-          ? 'Untuk membuat rencana diet yang lebih terstruktur, klik tombol di bawah ini:'
-          : 'To create a more structured diet plan, click the button below:'
+          ? 'Mari kita buat rencana diet yang sesuai dengan kebutuhan Anda!'
+          : 'Let\'s create a personalized diet plan for you!'
       };
     }
     
@@ -1474,7 +1838,9 @@ If intent is "action", also provide:
   const hasActionKeywords = (message) => {
     const actionKeywords = [
       'generate', 'create', 'make', 'build', 'use', 'open', 'go to',
-      'recipe generator', 'diet planner', 'meal plan', 'analyze'
+      'recipe generator', 'diet planner', 'meal plan', 'analyze',
+      'plan your weekly meals', 'plan my diet', 'weekly meals', 'meal planning',
+      'diet planning', 'nutrition plan'
     ];
     return actionKeywords.some(keyword => message.toLowerCase().includes(keyword));
   };
@@ -1484,6 +1850,11 @@ If intent is "action", also provide:
     const analysis = await detectIntentWithAI(userMessage, botResponse, conversationHistory);
     
     if (analysis.intent === 'action' && analysis.actionType && analysis.ctaText) {
+      // Handle diet planner action directly
+      if (analysis.actionType === 'diet-planner') {
+        setTimeout(() => startDietFlow(), 1000);
+        return `${text}<br><br><em>${analysis.ctaText}</em>`;
+      }
       return `${text}<br><br><em>${analysis.ctaText}</em>`;
     }
     
@@ -1660,8 +2031,23 @@ If intent is "action", also provide:
       return;
     }
 
-    // Check if we're in natural customization mode
+    // Check for direct diet planning requests
+    const normalizedMessage = message.replace(/[📊📅🍽️🎯💡]/g, '').toLowerCase();
+    if (normalizedMessage.includes('plan your weekly meals') || normalizedMessage.includes('plan my diet') ||
+        normalizedMessage.includes('diet plan') || normalizedMessage.includes('meal plan') ||
+        normalizedMessage.includes('weekly meals') || normalizedMessage.includes('meal planning')) {
+      await startDietFlow();
+      return;
+    }
+
+    // Check if we're in diet customization mode
     const lastBotMessage = messages.filter(m => m.sender === 'bot').pop();
+    if (lastBotMessage && lastBotMessage.suggestedAction && lastBotMessage.suggestedAction.type === 'diet-customization') {
+      await handleDietCustomization(message, lastBotMessage);
+      return;
+    }
+
+    // Check if we're in natural customization mode
     if (lastBotMessage && lastBotMessage.suggestedAction && lastBotMessage.suggestedAction.type === 'natural-customization') {
       // Reset tracking when starting gather-preferences
       if (lastBotMessage.suggestedAction.step === 'gather-preferences') {
@@ -2212,6 +2598,34 @@ Avoid asking questions. Make it enticing and concise.`
                     className="btn btn-ghost btn-sm"
                   >
                     Ubah detail
+                  </button>
+                </div>
+              )}
+
+              {/* Diet Customization: Confirmation step */}
+              {message.suggestedAction.type === 'diet-customization' && message.suggestedAction.step === 'confirm' && (
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button
+                    onClick={() => generateDietPlan()}
+                    className="btn btn-primary btn-sm text-white"
+                    style={{ backgroundColor: 'var(--accent)', border: 'none' }}
+                  >
+                    🍽️ Generate Diet Plan
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDietFlowActive(false);
+                      setDietPrefs({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
+                      setMessages(prev => [...prev, { 
+                        id: Date.now(), 
+                        text: 'No problem! Feel free to ask for a diet plan anytime.', 
+                        sender: 'bot', 
+                        timestamp: new Date() 
+                      }]);
+                    }}
+                    className="btn btn-ghost btn-sm"
+                  >
+                    Cancel
                   </button>
                 </div>
               )}
