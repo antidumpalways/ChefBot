@@ -32,6 +32,10 @@ ChefBot Pro is an innovative AI-driven platform designed to transform the way in
 - **Multi-Language Support**: Automatic language detection and response
 - **Mobile-Optimized**: Responsive chat interface for all devices
 - **Feature Integration**: Direct access to all app features through chat
+- **Off-Topic Handling**: Graceful redirection when users ask non-cooking questions
+- **Enhanced Nutrition Detection**: Direct nutrition questions like "how much nutrition in garlic?"
+- **Improved General Chat**: Better handling of greetings and general conversations
+- **Template Response Prevention**: No more generic "mix-up" messages
 
 ### 👥 Community Features
 - **Recipe Sharing**: Share your favorite recipes with the community
@@ -90,8 +94,8 @@ ChefBot Pro is an innovative AI-driven platform designed to transform the way in
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/antidumpalways/ChefBot.git
-   cd ChefBot
+   git clone https://github.com/antidumpalways/ChefBot-Pro.git
+   cd ChefBot-Pro
    ```
 
 2. **Install dependencies**
@@ -141,9 +145,10 @@ ChefBot Pro is an innovative AI-driven platform designed to transform the way in
 ## 📁 Project Structure
 
 ```
-ChefBot/
+ChefBot-Pro/
 ├── public/                     # Static assets
 │   ├── images/                # Image assets
+│   │   └── chefbot_pro.png    # Main logo
 │   └── placeholder.svg        # Default placeholder
 ├── src/
 │   ├── app/                   # Next.js App Router
@@ -155,18 +160,22 @@ ChefBot/
 │   │   │   ├── generate-recipe-image/
 │   │   │   ├── ingredient-similarity/
 │   │   │   └── sensay-chat/
-│   │   ├── category/[category]/ # Dynamic category pages
+│   │   ├── ai/               # AI recipe generator page
+│   │   ├── categories/       # Recipe categories
+│   │   ├── category/         # Dynamic category pages
 │   │   ├── community/        # Community recipes
 │   │   ├── dashboard/        # User dashboard
 │   │   ├── diet-planner/     # AI diet planning
 │   │   ├── favorite/         # Saved recipes
 │   │   ├── history/          # Cooking history
 │   │   ├── ingredient-explorer/ # Ingredient search
+│   │   ├── ingredient-similarity/ # Ingredient similarity
 │   │   ├── login/            # Authentication
-│   │   ├── meal/[meal]/      # Individual meal pages
+│   │   ├── meal/             # Individual meal pages
 │   │   ├── my-diet-plan/     # Saved diet plans
 │   │   ├── random/           # Random recipe generator
 │   │   ├── recipe/           # Recipe details
+│   │   ├── settings/         # User settings
 │   │   ├── upload-recipe/    # Recipe upload
 │   │   ├── globals.css       # Global styles
 │   │   ├── layout.jsx        # Root layout
@@ -174,42 +183,64 @@ ChefBot/
 │   ├── components/           # Reusable components
 │   │   ├── community/        # Community-specific components
 │   │   ├── AiRecipe.jsx      # AI recipe display
+│   │   ├── AnimatedFoodBackground.tsx # Animated background
 │   │   ├── BackButton.tsx    # Navigation button
-│   │   ├── Chatbot.jsx       # AI chatbot assistant
+│   │   ├── Chatbot.jsx       # Enhanced AI chatbot assistant
+│   │   ├── ChefKnifeCursor.tsx # Custom cursor
 │   │   ├── ContextualActions.jsx # Contextual action buttons
 │   │   ├── Footer.jsx        # Site footer
+│   │   ├── FormComponents.jsx # Form components
 │   │   ├── GenerateRecipeForm.jsx # Recipe generation form
-│   │   ├── LanguageSelector.jsx # Language selection component
+│   │   ├── GoogleTranslate.js # Translation utilities
+│   │   ├── ImageUpload.jsx   # Image upload component
+│   │   ├── IngredientSimilarity.jsx # Ingredient similarity
+│   │   ├── InstructionStep.jsx # Recipe instruction steps
+│   │   ├── LanguageSelector.jsx # Language selection
+│   │   ├── LoginRequiredButton.jsx # Login requirement
 │   │   ├── Navbar.tsx        # Navigation bar
 │   │   ├── ProtectedRoute.jsx # Route protection
+│   │   ├── RecipeSearchBar.tsx # Recipe search
 │   │   ├── SaveRecipeButton.jsx # Save recipe functionality
+│   │   ├── ScrollToTop.jsx   # Scroll to top button
+│   │   ├── SessionManager.jsx # Session management
 │   │   ├── ShareRecipeButton.jsx # Share recipe functionality
 │   │   ├── ShowMeal.jsx      # Meal display component
-│   │   ├── SmartSuggestions.jsx # Smart suggestions component
+│   │   ├── SmartSuggestions.jsx # Smart suggestions
+│   │   ├── SpoonCursor.tsx   # Spoon cursor animation
+│   │   ├── TextToSpeech.jsx  # Text-to-speech functionality
 │   │   └── ThemeToggle.jsx   # Theme switcher
+│   ├── config/               # Configuration files
+│   │   └── sensay.ts         # Sensay AI configuration
 │   ├── contexts/             # React contexts
 │   │   └── AuthContext.jsx   # Authentication context
 │   ├── hooks/                # Custom hooks
 │   │   └── useCookingHistory.js # Cooking history hook
 │   ├── lib/                  # Utility libraries
-│   │   ├── chatbot-integrations.js # Chatbot feature integrations
+│   │   ├── chatbot-integrations.js # Enhanced chatbot integrations
+│   │   ├── communityService.js # Community services
 │   │   ├── communityStorage.js # Community data storage
 │   │   ├── ingredientGraph.js # Ingredient relationships
 │   │   ├── language-support.js # Multi-language support
+│   │   ├── mockAuth.js       # Mock authentication
 │   │   ├── schemas.js        # Data validation schemas
+│   │   ├── seedCommunityData.js # Community data seeding
+│   │   ├── sensay-client.ts  # Sensay AI client
 │   │   ├── sensay-config.js  # Sensay AI configuration
 │   │   ├── sensayUserHelper.js # Sensay user management
 │   │   ├── supabase.js       # Supabase client
 │   │   ├── supabaseService.js # Database services
-│   │   ├── urls.js           # URL constants
-│   │   └── ThemeContext.js   # Theme management
+│   │   ├── ThemeContext.js   # Theme management
+│   │   └── urls.js           # URL constants
 │   ├── services/             # External services
 │   │   └── sensay-service.ts # Sensay AI integration
-│   └── types/                # TypeScript type definitions
-│       └── sensay-api.ts     # Sensay API types
+│   ├── types/                # TypeScript type definitions
+│   │   └── sensay-api.ts     # Sensay API types
+│   └── utils/                # Utility functions
+├── docs/                     # Documentation
 ├── final-complete-schema.sql # Database schema
 ├── next.config.mjs          # Next.js configuration
 ├── package.json             # Dependencies and scripts
+├── postcss.config.mjs       # PostCSS configuration
 ├── tailwind.config.js       # Tailwind CSS configuration
 ├── tsconfig.json            # TypeScript configuration
 └── README.md                # This file
@@ -295,6 +326,52 @@ const response = await fetch('/api/sensay-chat', {
 - **Foreign Key Relationships** - Data integrity
 - **Indexes** - Optimized query performance
 
+## 🤖 Recent Chatbot Improvements
+
+### Enhanced User Experience
+- **Template Response Prevention**: Eliminated generic "mix-up" messages that confused users
+- **Off-Topic Detection**: Intelligent detection of non-cooking questions with graceful redirection
+- **Enhanced Nutrition AI**: Direct nutrition analysis for questions like "how much nutrition in garlic?"
+- **Improved General Chat**: Better handling of greetings and general conversations
+
+### Smart Conversation Flow
+- **Greeting Detection**: Proper responses to "hi", "hello", "hey", etc.
+- **Context Preservation**: Maintains cooking focus throughout conversations
+- **Multiple Response Variations**: Keeps conversations fresh and engaging
+- **Double-Layer Protection**: Catches and redirects off-topic AI responses
+
+### Examples of Improved Interactions
+
+**Before (Template Response):**
+```
+User: "hi"
+Bot: "It seems like there might have been a little mix-up. Could you let me know what you're looking for..."
+```
+
+**After (Improved Response):**
+```
+User: "hi"
+Bot: "Hello! 👋 I'm your cooking assistant. I can help you with:
+• 🍳 Recipe generation
+• 📊 Diet planning  
+• 🍎 Nutrition analysis
+• 🧠 Health advice
+
+What would you like to cook today?"
+```
+
+**Off-Topic Handling:**
+```
+User: "How's the weather today?"
+Bot: "I'm ChefBot, your cooking assistant! 👨‍🍳 I specialize in helping with:
+• 🍳 Recipe creation & cooking tips
+• 📊 Meal planning & diet advice
+• 🍎 Nutrition analysis
+• 🧠 Health & wellness tips
+
+What would you like to cook or learn about cooking today?"
+```
+
 ## 🎯 Key Features Explained
 
 ### AI Recipe Generation
@@ -322,6 +399,11 @@ Revolutionary AI-powered conversational interface featuring:
 - **Feature Integration**: Direct access to recipe generation, diet planning, community features, and more
 - **Mobile-Optimized**: Responsive design that works perfectly on all devices
 - **Conversation Memory**: Maintains context throughout the conversation
+- **Off-Topic Detection**: Intelligent detection of non-cooking questions with graceful redirection
+- **Enhanced Nutrition AI**: Direct nutrition analysis for questions like "how much nutrition in garlic?"
+- **Improved User Experience**: Better handling of greetings, general questions, and edge cases
+- **Template Response Prevention**: Eliminates generic "mix-up" messages with helpful cooking-focused responses
+- **Double-Layer Protection**: Catches off-topic responses from AI and redirects appropriately
 
 ### Community Features
 - Share recipes with detailed information
@@ -403,8 +485,8 @@ We welcome contributions! Please follow these steps:
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/yourusername/ChefBot.git
-   cd ChefBot
+   git clone https://github.com/yourusername/ChefBot-Pro.git
+   cd ChefBot-Pro
    ```
 
 2. **Create a feature branch**
@@ -478,6 +560,11 @@ If you have any questions or need help:
 - [x] **Multi-Language Support** - Automatic language detection (English/Indonesian)
 - [x] **Context-Aware Responses** - AI understands current page and conversation history
 - [x] **Mobile-Optimized Chat** - Responsive chat interface for all devices
+- [x] **Off-Topic Question Handling** - Graceful redirection for non-cooking questions
+- [x] **Enhanced Nutrition Detection** - Direct nutrition analysis for specific questions
+- [x] **Template Response Prevention** - Eliminated generic "mix-up" messages
+- [x] **Improved General Chat** - Better handling of greetings and general conversations
+- [x] **Double-Layer Protection** - Catches and redirects off-topic AI responses
 
 ### Upcoming Features
 - [ ] **Voice Commands** - Voice-controlled recipe search and chat
