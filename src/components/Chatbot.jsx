@@ -34,7 +34,25 @@ export default function Chatbot() {
   const [askedFields, setAskedFields] = useState({});
   const [lockedFields, setLockedFields] = useState({});
   const [dietFlowActive, setDietFlowActive] = useState(false);
-  const [dietPrefs, setDietPrefs] = useState({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
+  const [dietPrefs, setDietPrefs] = useState({ 
+    goal: '', 
+    height: '', 
+    weight: '', 
+    age: '', 
+    gender: '', 
+    activityLevel: '', 
+    dietPreference: '', 
+    bloodSugar: '', 
+    bloodPressure: '', 
+    exclusions: '', 
+    allergies: '', 
+    cuisinePrefs: '' 
+  });
+  const [nutritionFlowActive, setNutritionFlowActive] = useState(false);
+  const [nutritionInput, setNutritionInput] = useState('');
+  const [healthCoachActive, setHealthCoachActive] = useState(false);
+  const [healthCoachInput, setHealthCoachInput] = useState('');
+  const [healthGoal, setHealthGoal] = useState('');
 
   // Schema: allowed follow-up fields by dish type (guards irrelevant questions)
   const DISH_TYPE_FIELDS = {
@@ -623,6 +641,32 @@ Please respond with a JSON object containing:
     return /(tak tahu|tidak tahu|gak tau|terserah|apa saja|anything|any|up to you|bebas)/i.test(t);
   };
 
+  // Check if question is off-topic (non-cooking related)
+  const isOffTopicQuestion = (message) => {
+    const offTopicPatterns = [
+      // Weather
+      /^(how'?s the weather|what'?s the weather|weather today|cuaca hari ini|bagaimana cuaca)/i,
+      // Politics
+      /^(who is the president|politics|election|voting|presiden siapa|politik|pemilu)/i,
+      // Technology
+      /^(what'?s the latest tech|new technology|latest gadget|teknologi terbaru|gadget baru)/i,
+      // Sports
+      /^(football|soccer|basketball|sports|olahraga|sepak bola|basket)/i,
+      // Entertainment
+      /^(movie|film|music|song|game|video game|film apa|lagu apa|game apa)/i,
+      // General knowledge
+      /^(what'?s the capital of|where is|when was|who invented|apa ibu kota|dimana|kapan|siapa yang)/i,
+      // Personal questions
+      /^(how old are you|what'?s your name|where do you live|berapa umur|nama kamu|dimana tinggal)/i,
+      // Current events
+      /^(what'?s happening|news today|berita hari ini|apa yang terjadi)/i,
+      // Mathematics/Science
+      /^(solve this math|calculate|what'?s 2\+2|hitung|matematika|fisika|kimia)/i
+    ];
+    
+    return offTopicPatterns.some(pattern => pattern.test(message));
+  };
+
   const nextMissingField = (prefs) => {
     if (!prefs.dishType) return 'dishType';
     if (!prefs.cuisine) return 'cuisine';
@@ -835,13 +879,317 @@ Please respond with a JSON object containing:
   const startDietFlow = async () => {
     try {
       setDietFlowActive(true);
-      const prompt = `You are a diet planning assistant. Ask ONE short question to get the user's main goal (lose weight, gain muscle, maintain). Keep it under 12 words, no options.`;
-      const res = await fetch('/api/sensay-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: prompt, userId: `diet-q-${chatSessionId}`, source: 'web', skipHistory: true }) });
-      const data = await res.json();
-      const question = (data?.content || 'What is your main diet goal?').trim();
-      setMessages(prev => [...prev, { id: Date.now(), text: question, sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'goal' } }]);
+      // Start with height question (same as manual form)
+      const question = 'What is your height in cm? (e.g., 175)';
+      setMessages(prev => [...prev, { id: Date.now(), text: question, sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'height' } }]);
     } catch {
-      setMessages(prev => [...prev, { id: Date.now(), text: 'What is your main diet goal?', sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'goal' } }]);
+      setMessages(prev => [...prev, { id: Date.now(), text: 'What is your height in cm? (e.g., 175)', sender: 'bot', timestamp: new Date(), suggestedAction: { type: 'diet-customization', step: 'height' } }]);
+    }
+  };
+
+  const startNutritionAI = async (directQuestion = null) => {
+    try {
+      setNutritionFlowActive(true);
+      
+      if (directQuestion) {
+        // Handle direct nutrition questions like "how much nutrition in a garlic?"
+        await handleNutritionAnalysis(directQuestion, { suggestedAction: { type: 'nutrition-analysis', step: 'input' } });
+        return;
+      }
+      
+      const question = '🍎 <strong>Nutrition AI Ready!</strong><br><br>Please paste your recipe ingredients here, and I\'ll analyze the nutrition facts for you!<br><br><strong>Example:</strong><br>- 1 cup rice<br>- 200g chicken breast<br>- 2 tbsp olive oil<br>- 1 onion, diced<br>- Salt and pepper to taste';
+      setMessages(prev => [...prev, { 
+        id: Date.now() + Math.random(), 
+        text: question, 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        suggestedAction: { type: 'nutrition-analysis', step: 'input' } 
+      }]);
+    } catch {
+      setMessages(prev => [...prev, { 
+        id: Date.now() + Math.random(), 
+        text: '🍎 <strong>Nutrition AI Ready!</strong><br><br>Please paste your recipe ingredients here, and I\'ll analyze the nutrition facts for you!', 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        suggestedAction: { type: 'nutrition-analysis', step: 'input' } 
+      }]);
+    }
+  };
+
+  const startHealthCoach = async () => {
+    try {
+      setHealthCoachActive(true);
+      const question = '🧠 <strong>AI Health Coach Ready!</strong><br><br>I can help you with:<br>• 🎯 Health goals & planning<br>• 🍎 Nutrition advice<br>• 💪 Exercise recommendations<br>• 😴 Sleep & wellness tips<br>• 🧘 Stress management<br>• 🏥 General health questions<br><br>What would you like advice on?';
+      setMessages(prev => [...prev, { 
+        id: Date.now() + Math.random(), 
+        text: question, 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        suggestedAction: { type: 'health-coach', step: 'input' } 
+      }]);
+    } catch {
+      setMessages(prev => [...prev, { 
+        id: Date.now() + Math.random(), 
+        text: '🧠 <strong>AI Health Coach Ready!</strong><br><br>What health advice do you need?', 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        suggestedAction: { type: 'health-coach', step: 'input' } 
+      }]);
+    }
+  };
+
+  const handleNutritionAnalysis = async (userMessage, lastBotMessage) => {
+    const step = lastBotMessage.suggestedAction.step;
+    
+    if (step === 'input') {
+      if (!userMessage.trim()) {
+        setMessages(prev => [...prev, {
+          id: Date.now() + Math.random(),
+          text: 'Please provide the recipe ingredients for nutrition analysis.',
+          sender: 'bot',
+          timestamp: new Date(),
+          suggestedAction: { type: 'nutrition-analysis', step: 'input' }
+        }]);
+        return;
+      }
+
+      setNutritionInput(userMessage);
+      
+      // Show loading message
+      setMessages(prev => [...prev, {
+        id: Date.now() + Math.random(),
+        text: '🍎 Analyzing nutrition facts...',
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+
+      try {
+        // Call nutrition analysis API
+        const response = await fetch('/api/analyze-nutrients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipe: userMessage })
+        });
+
+        const data = await response.json();
+        
+        if (data.nutrition && !data.nutrition.error) {
+          // Display nutrition results
+          const nutritionHtml = `
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 8px 0;">
+              <h3 style="color: #ff8c00; font-weight: bold; text-align: center; margin-bottom: 16px;">
+                🍎 Nutrition Facts (per serving)
+              </h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tbody>
+                  ${Object.entries(data.nutrition).map(([key, value]) => `
+                    <tr style="border-top: 1px solid #e2e8f0;">
+                      <td style="padding: 8px; font-weight: 600; text-transform: capitalize; color: #2d3748;">
+                        ${key}
+                      </td>
+                      <td style="padding: 8px; color: #4a5568;">
+                        ${value}${key === 'sodium' || key === 'cholesterol' ? ' mg' : ' g'}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+
+          setMessages(prev => [...prev, {
+            id: Date.now() + Math.random(),
+            text: nutritionHtml,
+            sender: 'bot',
+            timestamp: new Date(),
+            suggestedAction: { type: 'nutrition-analysis', step: 'complete' }
+          }]);
+        } else {
+          setMessages(prev => [...prev, {
+            id: Date.now() + Math.random(),
+            text: '⚠️ Sorry, I couldn\'t analyze the nutrition facts for those ingredients. Please try with different ingredients or check the format.',
+            sender: 'bot',
+            timestamp: new Date(),
+            suggestedAction: { type: 'nutrition-analysis', step: 'input' }
+          }]);
+        }
+      } catch (error) {
+        console.error('Nutrition analysis error:', error);
+        setMessages(prev => [...prev, {
+          id: Date.now() + Math.random(),
+          text: '⚠️ Sorry, there was an error analyzing the nutrition facts. Please try again.',
+          sender: 'bot',
+          timestamp: new Date(),
+          suggestedAction: { type: 'nutrition-analysis', step: 'input' }
+        }]);
+      }
+      
+      // Reset flow
+      setNutritionFlowActive(false);
+      setNutritionInput('');
+    }
+  };
+
+  const handleHealthCoach = async (userMessage, lastBotMessage) => {
+    const step = lastBotMessage.suggestedAction.step;
+    
+    if (step === 'input') {
+      if (!userMessage.trim()) {
+        setMessages(prev => [...prev, {
+          id: Date.now() + Math.random(),
+          text: 'Please tell me what health advice you need. I can help with nutrition, exercise, sleep, stress management, and general wellness.',
+          sender: 'bot',
+          timestamp: new Date(),
+          suggestedAction: { type: 'health-coach', step: 'input' }
+        }]);
+        return;
+      }
+
+      setHealthCoachInput(userMessage);
+      
+      // Show loading message
+      setMessages(prev => [...prev, {
+        id: Date.now() + Math.random(),
+        text: '🧠 Analyzing your health needs and preparing personalized advice...',
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+
+      try {
+        // Call Sensay AI for personalized health advice
+        const response = await fetch('/api/sensay-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `As an AI Health Coach, provide personalized health advice for: "${userMessage}"
+            
+            Please respond with a JSON object containing:
+            {
+              "goal": "brief description of their health goal",
+              "advice": "detailed, practical health advice",
+              "actionSteps": "3-5 specific action steps they can take",
+              "category": "nutrition|exercise|wellness|sleep|stress|general"
+            }
+            
+            Focus on:
+            - Practical, actionable advice
+            - Evidence-based recommendations
+            - Personalized approach based on their input
+            - Motivational support
+            - Safety considerations
+            
+            Always remind users to consult healthcare professionals for medical concerns.
+            
+            Keep advice concise but comprehensive, and make it actionable.`,
+            userId: 'chefbot-health-coach',
+            source: 'web'
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.content) {
+          try {
+            // Try to extract JSON from markdown code block first
+            let jsonText = null;
+            const codeBlockMatch = data.content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+            if (codeBlockMatch) {
+              jsonText = codeBlockMatch[1];
+            } else {
+              // Fallback to direct JSON parse
+              jsonText = data.content;
+            }
+
+            const healthAdvice = JSON.parse(jsonText);
+            
+            // Display health advice results
+            const healthAdviceHtml = `
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 20px; margin: 8px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h3 style="color: white; font-weight: bold; margin-bottom: 16px; text-align: center; font-size: 18px;">
+                  🧠 Personalized Health Advice
+                </h3>
+                
+                <div style="background: rgba(255,255,255,0.15); padding: 14px; border-radius: 8px; margin-bottom: 12px; backdrop-filter: blur(10px);">
+                  <strong style="color: #ffd700;">🎯 Your Goal:</strong><br>
+                  <span style="font-size: 14px;">${healthAdvice.goal || 'Health improvement'}</span>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.15); padding: 14px; border-radius: 8px; margin-bottom: 12px; backdrop-filter: blur(10px);">
+                  <strong style="color: #ffd700;">💡 Recommendation:</strong><br>
+                  <span style="font-size: 14px;">${healthAdvice.advice || 'Focus on balanced nutrition and regular exercise.'}</span>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.15); padding: 14px; border-radius: 8px; margin-bottom: 12px; backdrop-filter: blur(10px);">
+                  <strong style="color: #ffd700;">📋 Action Steps:</strong><br>
+                  <span style="font-size: 14px;">${healthAdvice.actionSteps || '1. Start with small changes\n2. Stay consistent\n3. Monitor progress'}</span>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px; margin-top: 12px; text-align: center;">
+                  <span style="font-size: 11px; opacity: 0.9;">
+                    ⚠️ Always consult healthcare professionals for medical concerns
+                  </span>
+                </div>
+              </div>
+            `;
+
+            setMessages(prev => [...prev, {
+              id: Date.now() + Math.random(),
+              text: healthAdviceHtml,
+              sender: 'bot',
+              timestamp: new Date(),
+              suggestedAction: { type: 'health-coach', step: 'complete' }
+            }]);
+          } catch (parseError) {
+            console.error('Failed to parse health advice response:', parseError);
+            
+            // Fallback: display raw response
+            const fallbackHtml = `
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 20px; margin: 8px 0;">
+                <h3 style="color: white; font-weight: bold; margin-bottom: 16px; text-align: center;">
+                  🧠 Health Advice
+                </h3>
+                <div style="background: rgba(255,255,255,0.15); padding: 14px; border-radius: 8px; font-size: 14px;">
+                  ${data.content.replace(/\n/g, '<br>')}
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px; margin-top: 12px; text-align: center;">
+                  <span style="font-size: 11px; opacity: 0.9;">
+                    ⚠️ Always consult healthcare professionals for medical concerns
+                  </span>
+                </div>
+              </div>
+            `;
+
+            setMessages(prev => [...prev, {
+              id: Date.now() + Math.random(),
+              text: fallbackHtml,
+              sender: 'bot',
+              timestamp: new Date(),
+              suggestedAction: { type: 'health-coach', step: 'complete' }
+            }]);
+          }
+        } else {
+          setMessages(prev => [...prev, {
+            id: Date.now() + Math.random(),
+            text: '⚠️ Sorry, I couldn\'t generate health advice right now. Please try again or consult a healthcare professional for medical concerns.',
+            sender: 'bot',
+            timestamp: new Date(),
+            suggestedAction: { type: 'health-coach', step: 'input' }
+          }]);
+        }
+      } catch (error) {
+        console.error('Health coach error:', error);
+        setMessages(prev => [...prev, {
+          id: Date.now() + Math.random(),
+          text: '⚠️ Sorry, there was an error generating health advice. Please try again or consult a healthcare professional.',
+          sender: 'bot',
+          timestamp: new Date(),
+          suggestedAction: { type: 'health-coach', step: 'input' }
+        }]);
+      }
+      
+      // Reset flow
+      setHealthCoachActive(false);
+      setHealthCoachInput('');
     }
   };
 
@@ -850,10 +1198,28 @@ Please respond with a JSON object containing:
     
     // Handle confirmation step
     if (step === 'confirm') {
-      if (/(yes|yep|sure|ok|generate|lanjut|gas|oke)/i.test(userMessage)) {
+      // Extract additional info from user input
+      const userInput = userMessage.toLowerCase();
+      const updatedPrefs = { ...dietPrefs };
+      
+      // Extract height, weight, age, gender
+      const heightMatch = userInput.match(/(\d+)\s*(?:cm|height)/i);
+      const weightMatch = userInput.match(/(\d+)\s*(?:kg|weight)/i);
+      const ageMatch = userInput.match(/(\d+)\s*(?:year|yr|age)/i);
+      const genderMatch = userInput.match(/(male|female|man|woman)/i);
+      
+      if (heightMatch) updatedPrefs.height = parseInt(heightMatch[1]);
+      if (weightMatch) updatedPrefs.weight = parseInt(weightMatch[1]);
+      if (ageMatch) updatedPrefs.age = parseInt(ageMatch[1]);
+      if (genderMatch) updatedPrefs.gender = genderMatch[1];
+      
+      setDietPrefs(updatedPrefs);
+      
+      // Check if user wants to proceed
+      if (/(yes|yep|sure|ok|generate|lanjut|gas|oke|up to you|whatever|fine|good)/i.test(userMessage)) {
         await generateDietPlan();
         return;
-      } else {
+      } else if (/(no|nope|cancel|batal|stop)/i.test(userMessage)) {
         setMessages(prev => [...prev, { 
           id: Date.now(), 
           text: 'No problem! Feel free to ask for a diet plan anytime.', 
@@ -861,121 +1227,338 @@ Please respond with a JSON object containing:
           timestamp: new Date() 
         }]);
         setDietFlowActive(false);
-        setDietPrefs({ goal: '', calories: '', days: '', mealsPerDay: '', exclusions: '', cuisinePrefs: '' });
+        setDietPrefs({ 
+          goal: '', 
+          height: '', 
+          weight: '', 
+          age: '', 
+          gender: '', 
+          activityLevel: '', 
+          dietPreference: '', 
+          bloodSugar: '', 
+          bloodPressure: '', 
+          exclusions: '', 
+          allergies: '', 
+          cuisinePrefs: '' 
+        });
+        return;
+      } else {
+        // If user provides additional info, proceed with generation
+        await generateDietPlan();
         return;
       }
     }
     
-    // Try local keyword extraction first (faster and more reliable)
-    const updatedPrefs = { ...dietPrefs };
-    const userInput = userMessage.toLowerCase().trim();
-    
-    // Extract goal locally
-    if (step === 'goal' || !updatedPrefs.goal) {
-      if (/(lose\s*weight|weight\s*loss|cut|deficit|turun\s*berat)/i.test(userInput)) {
-        updatedPrefs.goal = 'cut';
-      } else if (/(gain\s*muscle|bulk|mass|naik\s*berat|tambah\s*otot)/i.test(userInput)) {
-        updatedPrefs.goal = 'bulk';
-      } else if (/(maintain|keep|jaga)/i.test(userInput)) {
-        updatedPrefs.goal = 'maintain';
-      } else if (/(health|sehat|wellness)/i.test(userInput)) {
-        updatedPrefs.goal = 'general_health';
-      }
-    }
-    
-    // Extract calories locally
-    if (step === 'calories' || (!updatedPrefs.calories && /\d{3,4}/.test(userInput))) {
-      const calorieMatch = userInput.match(/(\d{3,4})/);
-      if (calorieMatch) {
-        updatedPrefs.calories = parseInt(calorieMatch[1]);
-      } else if (/(auto|calculate|hitung)/i.test(userInput)) {
-        updatedPrefs.calories = 'auto';
-      }
-    }
-    
-    // Extract days locally
-    if (step === 'days' || (!updatedPrefs.days && /\d+\s*(day|hari|week|minggu)/i.test(userInput))) {
-      const dayMatch = userInput.match(/(\d+)\s*(day|hari)/i);
-      const weekMatch = userInput.match(/(\d+)\s*(week|minggu)/i);
-      if (weekMatch) {
-        updatedPrefs.days = parseInt(weekMatch[1]) * 7;
-      } else if (dayMatch) {
-        updatedPrefs.days = parseInt(dayMatch[1]);
-      }
-    }
-    
-    // Extract meals per day locally
-    if (step === 'mealsPerDay' || (!updatedPrefs.mealsPerDay && /\d+\s*meal/i.test(userInput))) {
-      const mealMatch = userInput.match(/(\d+)\s*meal/i);
-      if (mealMatch) {
-        updatedPrefs.mealsPerDay = parseInt(mealMatch[1]);
-      }
-    }
-    
-    // Extract exclusions locally
-    if (step === 'exclusions') {
-      if (/(vegetarian|no\s*meat|tanpa\s*daging)/i.test(userInput)) {
-        updatedPrefs.exclusions = 'vegetarian';
-      } else if (/(vegan|plant\s*based)/i.test(userInput)) {
-        updatedPrefs.exclusions = 'vegan';
-      } else if (/(no\s*dairy|lactose)/i.test(userInput)) {
-        updatedPrefs.exclusions = 'no dairy';
-      } else if (/(none|no|tidak|gak\s*ada)/i.test(userInput)) {
-        updatedPrefs.exclusions = 'none';
-      } else {
-        updatedPrefs.exclusions = userInput;
-      }
-    }
-    
-    // Extract cuisine preference locally
-    if (step === 'cuisinePrefs') {
-      if (/(asian|asia)/i.test(userInput)) {
-        updatedPrefs.cuisinePrefs = 'Asian';
-      } else if (/(mediterranean|mediterania)/i.test(userInput)) {
-        updatedPrefs.cuisinePrefs = 'Mediterranean';
-      } else if (/(western|barat)/i.test(userInput)) {
-        updatedPrefs.cuisinePrefs = 'Western';
-      } else if (/(indonesian|indonesia)/i.test(userInput)) {
-        updatedPrefs.cuisinePrefs = 'Indonesian';
-      } else if (/(mixed|any|apa\s*saja)/i.test(userInput)) {
-        updatedPrefs.cuisinePrefs = 'Mixed';
-      }
-    }
-    
-    setDietPrefs(updatedPrefs);
-    
     try {
-      // Determine next step based on updated preferences
-      const nextStep = getNextDietStep(updatedPrefs, step);
+      // Normalize input first (same as recipe generator)
+      const cleaned = normalizeUserInput(userMessage);
       
-      if (nextStep === 'confirm') {
-        // Show confirmation and generate plan
-        const confirmationText = `Perfect! Here's what I understand:
+      // Check if input is simple (number, gender, activity level, etc.) - don't normalize these
+      const isNumericInput = /^\d+(\.\d+)?\s*(cm|kg|year|yr)?\s*$/i.test(cleaned.trim());
+      const isGenderInput = /^(male|female|other|prefer not to say|man|woman)$/i.test(cleaned.trim());
+      const isActivityInput = /^(sedentary|lightly active|moderately active|very active|extremely active)$/i.test(cleaned.trim());
+      const isGoalInput = /^(bulk|cut|maintain|general health|lose weight|gain muscle|cut - lose fat|bulk - gain muscle mass|maintain current weight)$/i.test(cleaned.trim());
+      const isDietInput = /^(vegetarian|non-vegetarian|eggetarian|vegan)$/i.test(cleaned.trim());
+      const isHealthInput = /^(normal|prediabetic|diabetic|elevated|high stage 1|high stage 2)$/i.test(cleaned.trim());
+      
+      const isSimpleInput = isNumericInput || isGenderInput || isActivityInput || isGoalInput || isDietInput || isHealthInput;
+      console.log('🔍 Input analysis:', { userMessage, cleaned, isSimpleInput, type: isNumericInput ? 'numeric' : isGenderInput ? 'gender' : isActivityInput ? 'activity' : isGoalInput ? 'goal' : isDietInput ? 'diet' : isHealthInput ? 'health' : 'complex' });
+      
+      let effectiveInput;
+      if (isSimpleInput) {
+        effectiveInput = cleaned;
+        console.log('🔢 Simple input detected, skipping normalization:', effectiveInput);
+      } else {
+        const normalized = await normalizeWithAI(cleaned, detectLanguage(userMessage) === 'id' ? 'Indonesian' : 'English');
+        effectiveInput = (normalized && normalized !== 'UNKNOWN') ? normalized : cleaned;
+        console.log('🗣️ Normalized input:', effectiveInput);
+      }
+
+      // Call SENSAY AI to interpret diet preferences (same pattern as recipe generator)
+      const response = await fetch('/api/sensay-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `Analyze this user's diet information and extract preferences. User said: "${effectiveInput}"
+
+CURRENT STEP: ${step}
+ALREADY COLLECTED DATA: ${JSON.stringify(dietPrefs)}
+
+Please respond with a JSON object containing ALL information (preserve existing data + add new):
+{
+  "goal": "cut|bulk|maintain|general_health",
+  "height": "number or null",
+  "weight": "number or null", 
+  "age": "number or null",
+  "gender": "male|female|other|prefer_not_to_say or null",
+  "activityLevel": "sedentary|lightly_active|moderately_active|very_active|extremely_active or null",
+  "dietPreference": "vegetarian|non-vegetarian|eggetarian|vegan or null",
+  "bloodSugar": "normal|prediabetic|diabetic or null",
+  "bloodPressure": "normal|elevated|high_stage1|high_stage2 or null",
+  "exclusions": "string or null",
+  "allergies": "string or null",
+  "cuisinePrefs": "string or null",
+  "interpretation": "Brief explanation of what you understood"
+}
+
+IMPORTANT: 
+- PRESERVE existing data from ALREADY COLLECTED DATA
+- Only update fields that are mentioned in the user input
+- If user says "160", and current step is "height", set height: 160 but keep other existing values
+
+SMART MAPPING RULES:
+- "losing weight", "lose weight", "weight loss", "cut", "deficit", "cut - lose fat" → goal: "cut"
+- "gaining muscle", "gain muscle", "bulk", "bulking", "mass", "tambah otot", "bulk - gain muscle mass" → goal: "bulk"
+- "maintain", "keep", "jaga berat badan", "maintain current weight" → goal: "maintain"
+- "general health", "health", "sehat", "wellness", "healthy" → goal: "general_health"
+- "vegetarian", "veggie", "no meat" → dietPreference: "vegetarian"
+- "vegan", "plant based" → dietPreference: "vegan"
+- Height: "175 cm", "175" → height: 175
+- Weight: "70 kg", "70" → weight: 70
+- Age: "27 year", "27" → age: 27
+- Gender: "male", "female", "man", "woman" → gender
+- Activity: "sedentary", "lightly active", "moderately active", "very active", "extremely active" → activityLevel
+- Blood sugar: "normal", "prediabetic", "diabetic" → bloodSugar
+- Blood pressure: "normal", "elevated", "high" → bloodPressure
+- "asian", "indonesian", "western" → cuisinePrefs
+- "no dairy", "lactose free" → exclusions
+- "nuts", "shellfish" → allergies
+
+UNDERSTAND CONTEXT AND TYPOS! Extract all relevant information.
+
+If user asks unrelated questions or gives unclear input:
+- If asking about other topics (not diet related), respond with: "Let's focus on your diet plan. [Ask the current question]"
+- If input is too vague, respond with: "Could you be more specific? [Ask the current question]"
+- If user gives multiple answers, extract the most relevant one
+- If user asks to skip, use reasonable defaults and continue
+
+Examples of smart handling:
+- "I don't know" → Ask for clarification
+- "What's the weather?" → "Let's focus on your diet plan. What is your height in cm?"
+- "I'm 175cm and I want to lose weight" → Extract height: 175, goal: cut
+- "Skip this" → Use default values and continue`,
+          userId: 'chefbot-diet-analyzer',
+          source: 'web'
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success && data.content) {
+        console.log('🔍 SENSAY raw response:', data.content);
+        try {
+          // Try to extract JSON from markdown code block first
+          let jsonText = null;
+          const codeBlockMatch = data.content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+          if (codeBlockMatch) {
+            jsonText = codeBlockMatch[1];
+            console.log('📦 Primary - Extracted from code block:', jsonText);
+          } else {
+            // Fallback to direct JSON parse
+            jsonText = data.content;
+            console.log('📦 Primary - Using direct content:', jsonText);
+          }
+          
+          const preferences = JSON.parse(jsonText);
+          console.log('🎯 Extracted diet preferences:', preferences);
+          
+          // Update diet preferences (same pattern as recipe generator)
+          const updatedPrefs = { ...dietPrefs };
+          if (preferences.goal) updatedPrefs.goal = preferences.goal;
+          if (preferences.height) updatedPrefs.height = preferences.height;
+          if (preferences.weight) updatedPrefs.weight = preferences.weight;
+          if (preferences.age) updatedPrefs.age = preferences.age;
+          if (preferences.gender) updatedPrefs.gender = preferences.gender;
+          if (preferences.activityLevel) updatedPrefs.activityLevel = preferences.activityLevel;
+          if (preferences.dietPreference) updatedPrefs.dietPreference = preferences.dietPreference;
+          if (preferences.bloodSugar) updatedPrefs.bloodSugar = preferences.bloodSugar;
+          if (preferences.bloodPressure) updatedPrefs.bloodPressure = preferences.bloodPressure;
+          if (preferences.exclusions) updatedPrefs.exclusions = preferences.exclusions;
+          if (preferences.allergies) updatedPrefs.allergies = preferences.allergies;
+          if (preferences.cuisinePrefs) updatedPrefs.cuisinePrefs = preferences.cuisinePrefs;
+          
+          setDietPrefs(updatedPrefs);
+          console.log('📝 Updated dietPrefs state:', updatedPrefs);
+
+          // Determine next step
+          const nextStep = getNextDietStep(updatedPrefs, step);
+          console.log('➡️ Next step:', nextStep);
+          
+          if (nextStep === 'confirm') {
+            // Show confirmation and generate plan
+            const confirmationText = `Perfect! Here's what I understand:
+
+📋 YOUR PROFILE:
+• Height: ${updatedPrefs.height || 'Not specified'} cm
+• Weight: ${updatedPrefs.weight || 'Not specified'} kg  
+• Age: ${updatedPrefs.age || 'Not specified'}
+• Gender: ${updatedPrefs.gender || 'Not specified'}
+
+💪 FITNESS & HEALTH:
 • Goal: ${updatedPrefs.goal || 'Not specified'}
-• Calories: ${updatedPrefs.calories || 'Auto-calculated'}
-• Duration: ${updatedPrefs.days || '7'} days
-• Meals per day: ${updatedPrefs.mealsPerDay || '3'}
+• Activity Level: ${updatedPrefs.activityLevel || 'Not specified'}
+• Blood Sugar: ${updatedPrefs.bloodSugar || 'Not specified'}
+• Blood Pressure: ${updatedPrefs.bloodPressure || 'Not specified'}
+
+🥗 DIET PREFERENCES:
+• Diet Type: ${updatedPrefs.dietPreference || 'Not specified'}
 • Exclusions: ${updatedPrefs.exclusions || 'None'}
+• Allergies: ${updatedPrefs.allergies || 'None'}
 • Cuisine: ${updatedPrefs.cuisinePrefs || 'Mixed'}
 
 Ready to generate your personalized diet plan?`;
 
-        setMessages(prev => [...prev, { 
-          id: Date.now(), 
-          text: confirmationText, 
-          sender: 'bot', 
-          timestamp: new Date(), 
-          suggestedAction: { type: 'diet-customization', step: 'confirm' } 
-        }]);
+            setMessages(prev => [...prev, { 
+              id: Date.now() + Math.random(), 
+              text: confirmationText, 
+              sender: 'bot', 
+              timestamp: new Date(), 
+              suggestedAction: { type: 'diet-customization', step: 'confirm' } 
+            }]);
+          } else {
+            // Ask next question
+            const nextQuestion = await generateDietQuestion(nextStep, updatedPrefs);
+            setMessages(prev => [...prev, { 
+              id: Date.now() + Math.random(), 
+              text: nextQuestion, 
+              sender: 'bot', 
+              timestamp: new Date(), 
+              suggestedAction: { type: 'diet-customization', step: nextStep } 
+            }]);
+          }
+          
+        } catch (parseError) {
+          console.error('Failed to parse SENSAY response:', parseError);
+          console.log('Raw SENSAY response:', data.content);
+          
+          // Check if SENSAY gave a direct response instead of JSON
+          const responseText = data.content.toLowerCase();
+          
+          // If SENSAY asked a clarifying question or gave instructions
+          if (responseText.includes('let\'s focus') || responseText.includes('could you be more specific') || 
+              responseText.includes('what is your') || responseText.includes('please tell me')) {
+            // Use SENSAY's response directly
+            setMessages(prev => [...prev, { 
+              id: Date.now() + Math.random(), 
+              text: data.content, 
+              sender: 'bot', 
+              timestamp: new Date(), 
+              suggestedAction: { type: 'diet-customization', step } 
+            }]);
+            return;
+          }
+          
+          // Try to extract JSON from response (same as recipe generator)
+          try {
+            // First try to extract from markdown code block
+            let jsonText = null;
+            const codeBlockMatch = data.content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+            if (codeBlockMatch) {
+              jsonText = codeBlockMatch[1];
+              console.log('📦 Extracted from code block:', jsonText);
+            } else {
+              // Fallback to simple JSON object match
+              const jsonMatch = data.content.match(/\{[\s\S]*\}/);
+              if (jsonMatch) {
+                jsonText = jsonMatch[0];
+                console.log('📦 Extracted from simple match:', jsonText);
+              }
+            }
+            
+            if (jsonText) {
+              const preferences = JSON.parse(jsonText);
+              console.log('🎯 Extracted diet preferences (fallback):', preferences);
+              
+              // Update diet preferences
+              const updatedPrefs = { ...dietPrefs };
+              if (preferences.goal) updatedPrefs.goal = preferences.goal;
+              if (preferences.height) updatedPrefs.height = preferences.height;
+              if (preferences.weight) updatedPrefs.weight = preferences.weight;
+              if (preferences.age) updatedPrefs.age = preferences.age;
+              if (preferences.gender) updatedPrefs.gender = preferences.gender;
+              if (preferences.activityLevel) updatedPrefs.activityLevel = preferences.activityLevel;
+              if (preferences.dietPreference) updatedPrefs.dietPreference = preferences.dietPreference;
+              if (preferences.bloodSugar) updatedPrefs.bloodSugar = preferences.bloodSugar;
+              if (preferences.bloodPressure) updatedPrefs.bloodPressure = preferences.bloodPressure;
+              if (preferences.exclusions) updatedPrefs.exclusions = preferences.exclusions;
+              if (preferences.allergies) updatedPrefs.allergies = preferences.allergies;
+              if (preferences.cuisinePrefs) updatedPrefs.cuisinePrefs = preferences.cuisinePrefs;
+              
+              setDietPrefs(updatedPrefs);
+              console.log('📝 Updated dietPrefs state (fallback):', updatedPrefs);
+
+              // Determine next step
+              const nextStep = getNextDietStep(updatedPrefs, step);
+              console.log('➡️ Next step:', nextStep);
+              
+              if (nextStep === 'confirm') {
+                // Show confirmation and generate plan
+                const confirmationText = `Perfect! Here's what I understand:
+
+📋 YOUR PROFILE:
+• Height: ${updatedPrefs.height || 'Not specified'} cm
+• Weight: ${updatedPrefs.weight || 'Not specified'} kg  
+• Age: ${updatedPrefs.age || 'Not specified'}
+• Gender: ${updatedPrefs.gender || 'Not specified'}
+
+💪 FITNESS & HEALTH:
+• Goal: ${updatedPrefs.goal || 'Not specified'}
+• Activity Level: ${updatedPrefs.activityLevel || 'Not specified'}
+• Blood Sugar: ${updatedPrefs.bloodSugar || 'Not specified'}
+• Blood Pressure: ${updatedPrefs.bloodPressure || 'Not specified'}
+
+🥗 DIET PREFERENCES:
+• Diet Type: ${updatedPrefs.dietPreference || 'Not specified'}
+• Exclusions: ${updatedPrefs.exclusions || 'None'}
+• Allergies: ${updatedPrefs.allergies || 'None'}
+• Cuisine: ${updatedPrefs.cuisinePrefs || 'Mixed'}
+
+Ready to generate your personalized diet plan?`;
+
+                setMessages(prev => [...prev, { 
+                  id: Date.now(), 
+                  text: confirmationText, 
+                  sender: 'bot', 
+                  timestamp: new Date(), 
+                  suggestedAction: { type: 'diet-customization', step: 'confirm' } 
+                }]);
+              } else {
+                // Ask next question
+                const nextQuestion = await generateDietQuestion(nextStep, updatedPrefs);
+                setMessages(prev => [...prev, { 
+                  id: Date.now(), 
+                  text: nextQuestion, 
+                  sender: 'bot', 
+                  timestamp: new Date(), 
+                  suggestedAction: { type: 'diet-customization', step: nextStep } 
+                }]);
+              }
+              return;
+            }
+          } catch (fallbackError) {
+            console.error('Fallback parsing also failed:', fallbackError);
+          }
+          
+          // If all parsing fails, ask for clarification with context
+          const nextQuestion = await generateDietQuestion(step, dietPrefs);
+          setMessages(prev => [...prev, { 
+            id: Date.now(), 
+            text: `I had trouble understanding that. ${nextQuestion}`, 
+            sender: 'bot', 
+            timestamp: new Date(), 
+            suggestedAction: { type: 'diet-customization', step } 
+          }]);
+        }
       } else {
-        // Ask next question
-        const nextQuestion = await generateDietQuestion(nextStep, updatedPrefs);
+        console.error('SENSAY API failed:', data);
         setMessages(prev => [...prev, { 
           id: Date.now(), 
-          text: nextQuestion, 
+          text: 'I had trouble understanding that. Could you please rephrase your diet goal?', 
           sender: 'bot', 
           timestamp: new Date(), 
-          suggestedAction: { type: 'diet-customization', step: nextStep } 
+          suggestedAction: { type: 'diet-customization', step } 
         }]);
       }
       
@@ -992,33 +1575,68 @@ Ready to generate your personalized diet plan?`;
   };
 
   const getNextDietStep = (prefs, currentStep) => {
-    // If goal is set, skip to confirmation (we can use defaults for other fields)
-    if (prefs.goal && currentStep === 'goal') {
-      return 'confirm';
+    console.log('🔍 getNextDietStep called with:', { prefs, currentStep });
+    
+    // Check required fields in order (same as manual form)
+    if (!prefs.height || prefs.height === '') {
+      console.log('➡️ Missing height, returning: height');
+      return 'height';
+    }
+    if (!prefs.weight || prefs.weight === '') {
+      console.log('➡️ Missing weight, returning: weight');
+      return 'weight';
+    }
+    if (!prefs.age || prefs.age === '') {
+      console.log('➡️ Missing age, returning: age');
+      return 'age';
+    }
+    if (!prefs.gender || prefs.gender === '') {
+      console.log('➡️ Missing gender, returning: gender');
+      return 'gender';
+    }
+    if (!prefs.activityLevel || prefs.activityLevel === '') {
+      console.log('➡️ Missing activityLevel, returning: activityLevel');
+      return 'activityLevel';
+    }
+    if (!prefs.goal || prefs.goal === '') {
+      console.log('➡️ Missing goal, returning: goal');
+      return 'goal';
+    }
+    if (!prefs.dietPreference || prefs.dietPreference === '') {
+      console.log('➡️ Missing dietPreference, returning: dietPreference');
+      return 'dietPreference';
+    }
+    if (!prefs.bloodSugar || prefs.bloodSugar === '') {
+      console.log('➡️ Missing bloodSugar, returning: bloodSugar');
+      return 'bloodSugar';
+    }
+    if (!prefs.bloodPressure || prefs.bloodPressure === '') {
+      console.log('➡️ Missing bloodPressure, returning: bloodPressure');
+      return 'bloodPressure';
     }
     
-    // Otherwise follow the sequence
-    if (!prefs.goal) return 'goal';
-    if (!prefs.calories && currentStep === 'calories') return 'calories';
-    if (!prefs.days && currentStep === 'days') return 'days';
-    if (!prefs.mealsPerDay && currentStep === 'mealsPerDay') return 'mealsPerDay';
-    if (!prefs.exclusions && currentStep === 'exclusions') return 'exclusions';
-    if (!prefs.cuisinePrefs && currentStep === 'cuisinePrefs') return 'cuisinePrefs';
-    
+    // All required fields filled, go to confirmation
+    console.log('➡️ All fields filled, returning: confirm');
     return 'confirm';
   };
 
   const generateDietQuestion = async (step, prefs) => {
     const questions = {
-      goal: 'What is your main diet goal? (lose weight, gain muscle, maintain, or general health)',
-      calories: 'How many calories per day? (or say "auto" for calculation)',
-      days: 'How many days for your diet plan? (default: 7 days)',
-      mealsPerDay: 'How many meals per day? (default: 3 meals)',
-      exclusions: 'Any foods to avoid? (e.g., "no meat", "vegetarian", "no dairy")',
-      cuisinePrefs: 'Preferred cuisine style? (e.g., "asian", "mediterranean", "western")'
+      height: 'What is your height in cm? (e.g., 175)',
+      weight: 'What is your weight in kg? (e.g., 70)',
+      age: 'What is your age? (e.g., 25)',
+      gender: 'What is your gender? (male, female, other, prefer not to say)',
+      activityLevel: 'What is your activity level? (sedentary, lightly active, moderately active, very active, extremely active)',
+      goal: 'What is your fitness goal? (bulk - gain muscle mass, cut - lose fat, maintain current weight, general health)',
+      dietPreference: 'What is your diet preference? (vegetarian, non-vegetarian, eggetarian, vegan)',
+      bloodSugar: 'What is your blood sugar level? (normal, prediabetic, diabetic)',
+      bloodPressure: 'What is your blood pressure status? (normal, elevated, high stage 1, high stage 2)',
+      exclusions: 'Any dietary restrictions or foods to avoid? (optional)',
+      allergies: 'Any food allergies? (optional)',
+      cuisinePrefs: 'Any cuisine preferences? (optional)'
     };
     
-    return questions[step] || 'Any other preferences?';
+    return questions[step] || 'Tell me more about your diet preferences.';
   };
 
   const generateDietPlan = async () => {
@@ -1030,19 +1648,19 @@ Ready to generate your personalized diet plan?`;
         timestamp: new Date() 
       }]);
 
-      // Prepare diet plan request
+      // Prepare diet plan request with user info
       const dietRequest = {
-        height: 170, // Default values - in real app, get from user profile
-        weight: 70,
-        age: 30,
-        gender: 'male',
-        activityLevel: 'moderate',
+        height: parseFloat(dietPrefs.height) || 170,
+        weight: parseFloat(dietPrefs.weight) || 70,
+        age: parseInt(dietPrefs.age) || 30,
+        gender: dietPrefs.gender || 'male',
+        activityLevel: dietPrefs.activityLevel || 'moderate',
         goal: dietPrefs.goal || 'maintain',
-        dietPreference: dietPrefs.cuisinePrefs || 'balanced',
-        bloodSugar: 'normal',
-        bloodPressure: 'normal',
-        dietaryRestrictions: dietPrefs.exclusions || [],
-        allergies: [],
+        dietPreference: dietPrefs.dietPreference || 'non-vegetarian',
+        bloodSugar: dietPrefs.bloodSugar || 'normal',
+        bloodPressure: dietPrefs.bloodPressure || 'normal',
+        dietaryRestrictions: dietPrefs.exclusions ? [dietPrefs.exclusions] : [],
+        allergies: dietPrefs.allergies ? [dietPrefs.allergies] : [],
         targetDate: new Date().toISOString().split('T')[0]
       };
 
@@ -1169,10 +1787,10 @@ Ready to generate your personalized diet plan?`;
 
     html += `
         <div style="text-align: center; margin-top: 20px;">
-          <button onclick="window.print()" style="background: #3182ce; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
+          <button onclick="alert('🖨️ Print Plan - Coming Soon!')" style="background: #9ca3af; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 10px;">
             🖨️ Print Plan
           </button>
-          <button onclick="alert('Feature coming soon!')" style="background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+          <button onclick="alert('📱 Save to App - Coming Soon!')" style="background: #9ca3af; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
             📱 Save to App
           </button>
         </div>
@@ -2031,6 +2649,37 @@ If intent is "action", also provide:
       return;
     }
 
+    // Check for general greetings and respond appropriately
+    if (/^(hi|hello|hey|hai|halo|good morning|good afternoon|good evening|what's up|how are you)/i.test(lowerMsg.trim())) {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: `Hello! 👋 I'm your cooking assistant. I can help you with:<br>• 🍳 Recipe generation<br>• 📊 Diet planning<br>• 🍎 Nutrition analysis<br>• 🧠 Health advice<br><br>What would you like to cook today?`,
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+      return;
+    }
+
+    // Check for off-topic questions and redirect to cooking
+    if (isOffTopicQuestion(lowerMsg)) {
+      const responses = [
+        `I'm ChefBot, your cooking assistant! 👨‍🍳 I specialize in helping with:<br>• 🍳 Recipe creation & cooking tips<br>• 📊 Meal planning & diet advice<br>• 🍎 Nutrition analysis<br>• 🧠 Health & wellness tips<br><br>What would you like to cook or learn about cooking today?`,
+        `That's outside my cooking expertise! 🍳 I'm here to help you with:<br>• 🍳 Recipe generation & cooking techniques<br>• 📊 Meal planning & nutrition<br>• 🍎 Food analysis & health tips<br><br>What culinary adventure shall we embark on today?`,
+        `I'm a cooking-focused assistant! 👨‍🍳 Let's talk about food instead:<br>• 🍳 Need a recipe for something special?<br>• 📊 Want to plan your meals?<br>• 🍎 Curious about nutrition facts?<br><br>What's cooking in your kitchen today?`
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: randomResponse,
+        sender: 'bot',
+        timestamp: new Date(),
+        suggestedAction: { type: 'recipe-generator', text: '🍳 Get Recipe Ideas', action: 'recipe-generator' }
+      }]);
+      return;
+    }
+
     // Check for direct diet planning requests
     const normalizedMessage = message.replace(/[📊📅🍽️🎯💡]/g, '').toLowerCase();
     if (normalizedMessage.includes('plan your weekly meals') || normalizedMessage.includes('plan my diet') ||
@@ -2040,10 +2689,41 @@ If intent is "action", also provide:
       return;
     }
 
+    // Check for nutrition AI requests
+    if (normalizedMessage.includes('nutrition ai') || normalizedMessage.includes('analyze food nutrition') ||
+        normalizedMessage.includes('nutrition analysis') || normalizedMessage.includes('food nutrition') ||
+        normalizedMessage.includes('nutrition in') || normalizedMessage.includes('nutrition of') ||
+        normalizedMessage.includes('how much nutrition') || normalizedMessage.includes('nutrition facts') ||
+        normalizedMessage.includes('nutritional value') || normalizedMessage.includes('calories in') ||
+        normalizedMessage.includes('nutrition content') || normalizedMessage.includes('nutritional info')) {
+      await startNutritionAI(message);
+      return;
+    }
+
+    // Check for health coach requests
+    if (normalizedMessage.includes('health coach') || normalizedMessage.includes('ai health coach') ||
+        normalizedMessage.includes('health advice') || normalizedMessage.includes('personalized advice') ||
+        normalizedMessage.includes('health tips') || normalizedMessage.includes('wellness advice')) {
+      await startHealthCoach();
+      return;
+    }
+
     // Check if we're in diet customization mode
     const lastBotMessage = messages.filter(m => m.sender === 'bot').pop();
     if (lastBotMessage && lastBotMessage.suggestedAction && lastBotMessage.suggestedAction.type === 'diet-customization') {
       await handleDietCustomization(message, lastBotMessage);
+      return;
+    }
+
+    // Check if we're in nutrition analysis mode
+    if (lastBotMessage && lastBotMessage.suggestedAction && lastBotMessage.suggestedAction.type === 'nutrition-analysis') {
+      await handleNutritionAnalysis(message, lastBotMessage);
+      return;
+    }
+
+    // Check if we're in health coach mode
+    if (lastBotMessage && lastBotMessage.suggestedAction && lastBotMessage.suggestedAction.type === 'health-coach') {
+      await handleHealthCoach(message, lastBotMessage);
       return;
     }
 
@@ -2210,6 +2890,20 @@ Avoid asking questions. Make it enticing and concise.`
       if (isRandomIntent || looksLikeSuggestion) {
         suggestedAction = { type: 'recipe-generator', text: '🍳 Generate Recipe', action: 'recipe-generator' };
       }
+      
+      // Check if response is generic/template and provide better fallback
+      if (/It seems like there might have been a little mix-up|Could you let me know what you're looking for|provide more details|clarify what you're looking for/i.test(data.content)) {
+        // Replace generic response with helpful cooking assistant response
+        data.content = `I'm your cooking assistant! I can help you with:<br>• 🍳 Recipe generation (just ask for any dish)<br>• 📊 Diet planning<br>• 🍎 Nutrition analysis<br>• 🧠 Health advice<br><br>What would you like to cook today?`;
+        suggestedAction = { type: 'recipe-generator', text: '🍳 Generate Recipe', action: 'recipe-generator' };
+      }
+      
+      // Check if response is completely off-topic and redirect
+      if (isOffTopicQuestion(data.content) || /weather|politics|sports|movie|music|game/i.test(data.content)) {
+        data.content = `I'm ChefBot, your cooking assistant! 👨‍🍳 I specialize in helping with:<br>• 🍳 Recipe creation & cooking tips<br>• 📊 Meal planning & diet advice<br>• 🍎 Nutrition analysis<br>• 🧠 Health & wellness tips<br><br>What would you like to cook or learn about cooking today?`;
+        suggestedAction = { type: 'recipe-generator', text: '🍳 Get Recipe Ideas', action: 'recipe-generator' };
+      }
+      
       console.log('🤖 Suggested Action:', suggestedAction);
 
       // Format the message and add call-to-action

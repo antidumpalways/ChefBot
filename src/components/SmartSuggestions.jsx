@@ -23,8 +23,8 @@ export default function SmartSuggestions({ onSuggestionClick, isVisible = true }
       return [
         "🍳 Generate a random recipe with Sensay AI",
         "📊 Plan your weekly meals",
-        "👥 Browse community recipes",
-        "🔍 Explore ingredients and substitutions"
+        "🥗 Nutrition AI - Analyze food nutrition",
+        "🧠 AI Health Coach - Get personalized advice"
       ];
     }
 
